@@ -9,7 +9,7 @@ ModelType = Union[Module, 'ModelMixin']
 
 
 class ModelMixin:
-    MODEL_DIR: Path = Path(__file__).parents[1] / 'saved_models'
+    MODEL_DIR: Path = Path(__file__).parents[3] / 'saved_models'
 
     def cpu_state_dict(self: ModelType):
         return OrderedDict([(k, v.to('cpu')) for k, v in self.state_dict().items()])
