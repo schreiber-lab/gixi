@@ -3,7 +3,7 @@ cluster_config:
   nodes: 1
   partition: psx
   reservation: ''
-  time: 01:30:00
+  time: 00:10:00
   use_cuda: true
 contrast:
   coef: 5000
@@ -16,15 +16,15 @@ general:
   sum_images: 10
   timeout: 120
 job_config:
-  config_path: q_config_dec_2021_new.yaml
-  data_dir: ~/beamtimes/GIWAXS_Dec2021
+  config_path: test_config_saved.yaml
+  data_dir: ~/local_scripts/gixi/tests/data
   dest_name: test_data.h5
-  folder_name: S123_MABr_A2_00865
-  name: GIXD_ML_tests
+  folder_name: dset1
+  name: gixi_test
 model_config:
   name: save_only_largest_2
 parallel:
-  max_batch: 64
+  max_batch: 10
   parallel_computation: false
 polar_config:
   algorithm: 1
