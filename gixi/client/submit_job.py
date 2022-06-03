@@ -11,6 +11,11 @@ def generate_sh_str(config: AppConfig) -> str:
     else:
         partition = f'#SBATCH --partition={config.cluster_config.partition}'
 
+    if config.cluster_config.use_cuda:
+        constraint = f'#SBATCH --constraint=GPU'
+    else:
+        constraint = ''
+
     python_args = str(config.job_config.config_path)
     return f'''#!/bin/bash
 {partition}
@@ -20,6 +25,7 @@ def generate_sh_str(config: AppConfig) -> str:
 #SBATCH --time={config.cluster_config.time}
 #SBATCH --output {get_conf_out(config)}
 #SBATCH --error {get_conf_err(config)}
+{constraint}
 
 cd {str(PROGRAM_PATH)}
 export DATA_DIR={config.job_config.data_dir}
