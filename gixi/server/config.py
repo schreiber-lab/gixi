@@ -57,7 +57,7 @@ class ExtendableNamedTuple(object):
 
 class Config(ExtendableNamedTuple):
 
-    _FOLDER = Path(__file__).parents[1] / 'config_files'
+    _FOLDER = Path(__file__).parents[2] / 'config_files'
     PARAM_DESCRIPTIONS = {}
 
     CONF_NAME = ''
