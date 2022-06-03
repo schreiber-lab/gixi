@@ -45,7 +45,7 @@ def get_conf_err(conf: AppConfig) -> str:
 
 
 def get_conf_path(conf: AppConfig) -> Path:
-    return Path(conf.program_paths_config.program_path).expanduser() / f'{conf.job_config.name}.sh'
+    return PROGRAM_PATH / 'sbatch_scripts' / f'{conf.job_config.name}.sh'
 
 
 def submit_job(conf: AppConfig) -> Tuple[str, str]:
