@@ -1,0 +1,11 @@
+numpy>=1.18.1
+scipy
+torch>=1.8.1
+torchvision
+tqdm
+PyYAML
+scikit-image
+opencv-python
+periodictable
+crystals
+h5py
