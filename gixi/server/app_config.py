@@ -1,5 +1,6 @@
 from pathlib import Path
 from collections import OrderedDict
+
 from .config import Config
 
 PROGRAM_PATH = Path(__file__).parents[2].expanduser().absolute()
