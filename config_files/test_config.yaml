@@ -35,8 +35,6 @@ postprocessing_config:
   score_level: 0.6
 program_paths_config:
   local_env: false
-  program_path: ~/local_scripts/giwaxs_program/
-  server_script: run_server.py
 q_space:
   distance: 1208.69
   flip_x: false
