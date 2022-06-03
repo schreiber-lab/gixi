@@ -1,0 +1,58 @@
+cluster_config:
+  chdir: ~/maxwell_output/
+  nodes: 1
+  partition: psx
+  reservation: ''
+  time: 01:30:00
+  use_cuda: true
+contrast:
+  coef: 5000
+  disable: false
+  limit: 2000
+  log: true
+general:
+  real_time: false
+  sleep_time: 0.1
+  sum_images: 10
+  timeout: 120
+job_config:
+  config_path: q_config_dec_2021_new.yaml
+  data_dir: ~/beamtimes/GIWAXS_Dec2021
+  dest_name: test_data.h5
+  folder_name: S123_MABr_A2_00865
+  name: GIXD_ML_tests
+model_config:
+  name: save_only_largest_2
+parallel:
+  max_batch: 64
+  parallel_computation: false
+polar_config:
+  algorithm: 1
+  angular_size: 512
+  q_size: 1024
+postprocessing_config:
+  nms_level: 0.1
+  score_level: 0.6
+program_paths_config:
+  local_env: false
+  program_path: ~/local_scripts/giwaxs_program/
+  server_script: run_server.py
+q_space:
+  distance: 1208.69
+  flip_x: false
+  flip_y: true
+  incidence_angle: 0.5
+  pixel_size: 0.2
+  q_xy_max: 2.7
+  q_xy_num: 1350
+  q_z_max: 2.7
+  q_z_num: 1350
+  size_x: 2048
+  size_y: 2048
+  wavelength: 0.6888
+  y0: 545
+  z0: 222
+save_config:
+  save_img: true
+  save_polar_img: true
+  save_scores: true

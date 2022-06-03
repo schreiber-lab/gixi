@@ -2,7 +2,7 @@ from typing import Tuple
 from pathlib import Path
 import subprocess
 
-from ..server.app_config import AppConfig
+from ..server.app_config import AppConfig, PROGRAM_PATH
 
 
 def generate_sh_str(config: AppConfig) -> str:
@@ -21,9 +21,9 @@ def generate_sh_str(config: AppConfig) -> str:
 #SBATCH --output {get_conf_out(config)}
 #SBATCH --error {get_conf_err(config)}
 
-cd {config.program_paths_config.program_path}
+cd {str(PROGRAM_PATH)}
 export DATA_DIR={config.job_config.data_dir}
-python {config.program_paths_config.server_script} {python_args}
+python -m gixi.server {python_args}
 '''
 
 

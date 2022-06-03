@@ -2,6 +2,8 @@ from pathlib import Path
 from collections import OrderedDict
 from .config import Config
 
+PROGRAM_PATH = Path(__file__).parents[2].expanduser().absolute()
+
 
 class ContrastConfig(Config):
     limit: float = 2000
@@ -145,15 +147,11 @@ class SaveConfig(Config):
 
 
 class ProgramPathsConfig(Config):
-    program_path: str = '~/local_scripts/giwaxs_program/'
-    server_script: str = 'run_server.py'
     local_env: bool = False
 
     CONF_NAME = 'Program Paths'
 
-    PARAM_DESCRIPTIONS = dict(
-        program_path='Program directory (program_dir; temporary parameter)',
-    )
+    PARAM_DESCRIPTIONS = dict()
 
 
 class ModelConfig(Config):
