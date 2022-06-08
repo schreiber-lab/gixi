@@ -9,7 +9,7 @@ from .model import (
     Matcher,
 )
 
-from .app_config import AppConfig
+from gixi.server.app_config import AppConfig
 
 
 def get_basic_model_1(config: AppConfig):

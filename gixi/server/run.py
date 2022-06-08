@@ -2,8 +2,8 @@ from argparse import ArgumentParser
 from time import perf_counter
 import logging
 
-from .servers import run_server
-from .app_config import AppConfig
+from gixi.server.servers import run_server
+from gixi.server.app_config import AppConfig
 
 
 def run(config_file: str = None):

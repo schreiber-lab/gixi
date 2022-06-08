@@ -2,7 +2,7 @@ from typing import Tuple
 from pathlib import Path
 import subprocess
 
-from ..server.app_config import AppConfig, PROGRAM_PATH
+from gixi.server.app_config import AppConfig, PROGRAM_PATH
 
 
 def generate_sh_str(config: AppConfig) -> str:

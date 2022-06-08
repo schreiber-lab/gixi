@@ -1,9 +1,10 @@
+
 from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtCore import pyqtSlot
 
-from .file_viewer import FileViewer
-from .h5file_viewer import H5Viewer
-from .cif_viewer import CifViewer
+from gixi.client.file_viewer import FileViewer
+from gixi.client.h5file_viewer import H5Viewer
+from gixi.client.cif_viewer import CifViewer
 
 
 class FileTab(QTabWidget):

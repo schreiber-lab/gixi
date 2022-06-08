@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtCore import pyqtSlot
 
-from .image_viewer import ImageViewer
-from .polar_viewer import PolarViewer
+from gixi.client.image_viewer import ImageViewer
+from gixi.client.polar_viewer import PolarViewer
 
 
 class ImageTab(QTabWidget):

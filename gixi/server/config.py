@@ -1,6 +1,8 @@
 from pathlib import Path
 import yaml
 
+CONFIG_FOLDER = Path(__file__).parents[2] / 'config_files'
+
 
 class ExtendableNamedTuple(object):
     def __new__(cls, *args, **kwargs):
@@ -56,8 +58,6 @@ class ExtendableNamedTuple(object):
 
 
 class Config(ExtendableNamedTuple):
-
-    _FOLDER = Path(__file__).parents[2] / 'config_files'
     PARAM_DESCRIPTIONS = {}
 
     CONF_NAME = ''
@@ -68,7 +68,7 @@ class Config(ExtendableNamedTuple):
     def __reduce__(self):
         # we return a tuple of class_name to call,
         # and optional parameters to pass when re-creating
-        return self.__class__, (self.asdict(), )
+        return self.__class__, (self.asdict(),)
 
     @classmethod
     def from_config(cls, filename: str, default_config: dict or 'Config' = None):
@@ -89,7 +89,7 @@ class Config(ExtendableNamedTuple):
     def path(filename: str) -> Path:
         if '.' not in filename:
             filename = f'{filename}.yaml'
-        return Config._FOLDER / filename
+        return CONFIG_FOLDER / filename
 
     def save_to_config(self, path: Path):
         config_path = self.path(path.name)

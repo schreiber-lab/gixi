@@ -11,12 +11,12 @@ from PyQt5.QtCore import (
 
 from PIL import Image
 
-from ..server.img_processing import ContrastCorrection
-from ..server.app_config import AppConfig
+from gixi.server.img_processing import ContrastCorrection
+from gixi.server.app_config import AppConfig
 
-from .submit_job import submit_job
-from .tools import show_error
-from .read_cifs import get_powder_profile
+from gixi.client.submit_job import submit_job
+from gixi.client.tools import show_error
+from gixi.client.read_cifs import get_powder_profile
 
 
 class DataHolder(QObject):
@@ -30,14 +30,14 @@ class DataHolder(QObject):
         self.image = None
         self.data = None
         self._q_num: int = 1024
-        self.config: AppConfig = None
+        self.current_config: AppConfig = AppConfig()
         self.contrast_correction = ContrastCorrection()
 
     @property
     def q_max(self):
         # TODO: info has to be taken from saved files (not from current config!)
-        if self.config:
-            return np.sqrt(self.config.q_space.q_z_max ** 2 + self.config.q_space.q_xy_max ** 2)
+        if self.current_config:
+            return np.sqrt(self.current_config.q_space.q_z_max ** 2 + self.current_config.q_space.q_xy_max ** 2)
         else:
             return 1.
 

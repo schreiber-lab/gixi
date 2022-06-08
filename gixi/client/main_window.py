@@ -7,13 +7,14 @@ from pyqtgraph.dockarea import DockArea, Dock
 
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from .data_holder import DataHolder
-from .file_tab import FileTab
-from .image_tab import ImageTab
-from .radial_profiles import RadialProfilesWidget
-from .config_widget import ConfigWidget
-from .tools import center_widget
-from .exception_message import UncaughtHook
+from gixi.client.logs import QtLogWidgetHolder, set_log_config
+from gixi.client.data_holder import DataHolder
+from gixi.client.file_tab import FileTab
+from gixi.client.image_tab import ImageTab
+from gixi.client.radial_profiles import RadialProfilesWidget
+from gixi.client.config_widget import ConfigWidget
+from gixi.client.tools import center_widget, Icon
+from gixi.client.exception_message import UncaughtHook
 
 DEFAULT_DIR = str(Path.home().absolute())
 
@@ -24,6 +25,9 @@ class MainWindow(QMainWindow):
         self.setGeometry(0, 0, 1500, 700)
         self.main_widget = MainWidget(self, base_dir)
         self.setCentralWidget(self.main_widget)
+        self.setWindowTitle('gixi')
+        self.setWindowIcon(Icon('window_icon'))
+
         self._init_menubar()
         center_widget(self)
         self.exception_hook = UncaughtHook(self)
@@ -49,9 +53,10 @@ class MainWidget(DockArea):
 
         self.data_controller = DataHolder(self)
         self.file_tab = FileTab(base_dir, self)
+        self.log_holder = QtLogWidgetHolder(self)
         self.image_tab = ImageTab(self)
         self.radial_profiles = RadialProfilesWidget(self)
-        self.submit_job_window = ConfigWidget(self)
+        self.submit_job_window = ConfigWidget(self.data_controller.current_config, self)
         self.docks = {}
 
         self._init_ui()
@@ -59,6 +64,7 @@ class MainWidget(DockArea):
 
     def _init_ui(self):
         self._add_dock(self.file_tab, 'FileTab')
+        self._add_dock(self.log_holder.widget, 'Logs', position='bottom', size=(10, 100))
         self._add_dock(self.image_tab, 'ImageTab', position='right', size=(500, 500))
         self._add_dock(self.radial_profiles, 'RadialProfiles', position='right', size=(500, 500))
         self._hide_dock_callable('RadialProfiles')()
@@ -108,6 +114,8 @@ def parse_args():
 
 def main(path: str = DEFAULT_DIR):
     args = parse_args()
+
+    set_log_config()
 
     path = args.dir if args.dir and Path(args.dir).is_dir() else path
 

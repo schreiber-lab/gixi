@@ -1,1 +1,1 @@
-from .main_window import main
+from gixi.client.main_window import main

@@ -7,9 +7,9 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QItemSelectionModel
 
 import numpy as np
 
-from .h5utils import H5FileManager, H5Items
+from gixi.client.h5utils import H5FileManager, H5Items
 
-from .tools import get_h5_filepath
+from gixi.client.tools import get_h5_filepath
 
 
 class H5Model(QStandardItemModel):

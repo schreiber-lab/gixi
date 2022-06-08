@@ -2,6 +2,8 @@ numpy>=1.18.1
 scipy
 torch==1.8.1
 torchvision==0.9.1
+PyQt5
+pyqtgraph>=0.12
 tqdm
 PyYAML
 scikit-image

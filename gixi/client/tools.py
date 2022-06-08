@@ -5,12 +5,31 @@ from PyQt5.QtWidgets import (QGraphicsColorizeEffect, QLineEdit,
                              QWidget, QApplication, QMessageBox,
                              QFileDialog)
 from PyQt5.QtCore import QPropertyAnimation, Qt
-from PyQt5.QtGui import QColor, QPen
+from PyQt5.QtGui import QColor, QPen, QIcon
 
 GLOB_IMAGE_FORMATS = 'tif files (*.tiff *.tif)'
 H5_FORMATS = 'h5 files (*.h5 *.hdf5)'
 
 logger = logging.getLogger(__name__)
+
+ICON_PATH: Path = Path(__file__).parents[2] / 'static' / 'icons'
+
+
+class SingletonMeta(type):
+    _instance = None
+
+    def __call__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__call__(*args, **kwargs)
+        return cls._instance
+
+
+class Icon(QIcon):
+    def __init__(self, name: str):
+        if name.find('.') == -1:
+            name += '.png'
+        name = str(ICON_PATH / name)
+        QIcon.__init__(self, name)
 
 
 class DummySignal(object):
@@ -101,18 +120,6 @@ def get_pen(width: int = 1, color: str or QColor = 'white', style=Qt.SolidLine) 
     pen.setJoinStyle(Qt.RoundJoin)
     pen.setCosmetic(True)
     return pen
-
-
-def show_error(err: str, *, error_title: str = 'Internal Error', info_text: str = ''):
-    logger.info(f'Error message shown: {error_title} - {err} {info_text}.')
-
-    mb = QMessageBox()
-    mb.setIcon(QMessageBox.Critical)
-    mb.setWindowTitle(error_title)
-    mb.setText(err)
-    if info_text:
-        mb.setInformativeText(info_text)
-    mb.exec_()
 
 
 def center_widget(widget):

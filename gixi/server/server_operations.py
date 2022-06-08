@@ -6,14 +6,14 @@ import sys
 import numpy as np
 import torch
 
-from .models_collection import get_basic_model_1
-from .img_processing import (
+from gixi.server.models_collection import get_basic_model_1
+from gixi.server.img_processing import (
     PolarInterpolation,
     QInterpolation,
     ContrastCorrection,
 )
-from .app_config import AppConfig
-from .tools import read_image, to_np
+from gixi.server.app_config import AppConfig
+from gixi.server.tools import read_image, to_np
 
 
 class FeatureDetector(object):

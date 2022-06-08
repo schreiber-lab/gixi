@@ -1,8 +1,8 @@
 import numpy as np
 from PyQt5.QtCore import pyqtSlot
 
-from .basic_widgets import Viewer2D
-from .rois import Roi2DRect
+from gixi.client.basic_widgets import Viewer2D
+from gixi.client.rois import Roi2DRect
 
 
 class PolarViewer(Viewer2D):

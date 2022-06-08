@@ -5,8 +5,8 @@ import numpy as np
 import torch
 from PIL import Image
 
-from .misc import to_np
-from .postprocessing import PostProcessing
+from gixi.server.misc import to_np
+from gixi.server.postprocessing import PostProcessing
 
 
 @torch.no_grad()

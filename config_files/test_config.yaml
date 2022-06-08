@@ -6,20 +6,20 @@ cluster_config:
   time: 00:10:00
   use_cuda: true
 contrast:
-  coef: 5000
+  coef: 5000.0
   disable: false
-  limit: 2000
+  limit: 2000.0
   log: true
 general:
   real_time: false
   sleep_time: 0.1
   sum_images: 10
-  timeout: 120
+  timeout: 120.0
 job_config:
-  config_path: test_config_saved.yaml
+  config_path: test_config.yaml
   data_dir: ~/local_scripts/gixi/tests/data
   dest_name: test_data.h5
-  folder_name: dset1
+  folder_name: dset23
   name: gixi_test
 model_config:
   name: save_only_largest_2

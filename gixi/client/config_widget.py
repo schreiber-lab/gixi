@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 from typing import Type
+import logging
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QSplitter, QMessageBox
+from PyQt5.QtGui import QCloseEvent
 
 from pyqtgraph.parametertree import Parameter, ParameterTree
 
+from gixi.server.app_config import AppConfig, JobConfig
+from gixi.server.config import Config
 
-from ..server.app_config import AppConfig, JobConfig
-from ..server.config import Config
-
-from .tools import center_widget
+from gixi.client.tools import center_widget
+from gixi.client.config_list import ConfigList
 
 
 class ConfigParamTree(ParameterTree):
@@ -53,16 +55,23 @@ class ConfigParamTree(ParameterTree):
 
 class ConfigWidget(QWidget):
     sigSubmitJobClicked = pyqtSignal(AppConfig)
+    sigCurrentConfigUpdated = pyqtSignal(AppConfig)
 
-    def __init__(self, parent=None):
+    def __init__(self, current_config: AppConfig, parent=None):
         super().__init__(parent)
+        self.logger = logging.getLogger(__name__)
+
         self.setWindowFlag(Qt.Window, True)
         self.setWindowModality(Qt.WindowModal)
         self.setGeometry(0, 0, 1200, 500)
         center_widget(self)
 
+        self.setWindowTitle('Configuration')
+
         self.parameter_tree = ConfigParamTree(self)
+        self.config_list = ConfigList(current_config, self)
         self.submit_btn = QPushButton('Submit job', self)
+        self.update_current_config = QPushButton('Update current config', self)
         self.save_config = QPushButton('Save config', self)
         self.load_config = QPushButton('Load config', self)
         self.cancel_btn = QPushButton('Cancel', self)
@@ -71,41 +80,92 @@ class ConfigWidget(QWidget):
 
     def _connect(self):
         self.submit_btn.clicked.connect(self._on_submit_clicked)
+        self.update_current_config.clicked.connect(self._update_current_config)
         self.cancel_btn.clicked.connect(self._on_cancel_clicked)
         self.save_config.clicked.connect(self._save_config)
         self.load_config.clicked.connect(self._load_config)
+        self.config_list.sigConfigSelectedSignal.connect(self.set_config)
+
+    @pyqtSlot()
+    def _update_current_config(self):
+        current_config = self.current_config
+        self.config_list.update_current_config(current_config)
+        self.config_list.select_current_config()
+        self.sigCurrentConfigUpdated.emit(current_config)
 
     @pyqtSlot()
     def _on_cancel_clicked(self):
+        self._ask_before_close()
         self.hide()
 
     @pyqtSlot()
     def _on_submit_clicked(self):
         config = self._save_config()
+        self.logger.info('Submit job')
         self.sigSubmitJobClicked.emit(config)
+
+        self._ask_before_close()
         self.hide()
 
     @pyqtSlot()
     def _save_config(self):
         config = self.parameter_tree.app_config
         path = Path(config.job_config.config_path)
+        self.logger.info(f'Saving new config to {str(path)}')
         config.save_to_config(path)
+        self.logger.info(f'Config is saved to {str(path)}')
+        self.config_list.update_paths()
         return config
+
+    @pyqtSlot(AppConfig)
+    def set_config(self, config: AppConfig):
+        self.parameter_tree.set_config(config)
+
+    @property
+    def current_config(self) -> AppConfig:
+        return self.parameter_tree.app_config
 
     @pyqtSlot()
     def _load_config(self):
         config = self.parameter_tree.app_config
         path = config.job_config.config_path
         config = AppConfig.from_config(path, config)
-        self.parameter_tree.set_config(config)
+        self.set_config(config)
+        self.logger.info(f'Config is loaded from {str(path)}')
 
     def _init_ui(self):
         layout = QGridLayout(self)
-        layout.addWidget(self.parameter_tree, 0, 0, 1, 2)
-        layout.addWidget(self.submit_btn, 1, 0)
+
+        splitter = QSplitter(Qt.Horizontal)
+        splitter.addWidget(self.parameter_tree)
+        splitter.addWidget(self.config_list)
+
+        layout.addWidget(splitter, 0, 0, 1, 2)
+        layout.addWidget(self.update_current_config, 1, 0)
         layout.addWidget(self.cancel_btn, 1, 1)
         layout.addWidget(self.save_config, 2, 0)
         layout.addWidget(self.load_config, 2, 1)
+        layout.addWidget(self.submit_btn, 3, 0, 1, 2)
+
+    def _ask_before_close(self):
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Question)
+
+        msg.setText("Do you want to update the configuration?")
+        msg.setWindowTitle("Close configuration")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+        res = msg.exec_()
+
+        if res == QMessageBox.Yes:
+            self._update_current_config()
+        elif res == QMessageBox.No:
+            current_config = self.config_list.current_config
+            self.set_config(current_config)
+
+    def closeEvent(self, a0: QCloseEvent) -> None:
+        self._ask_before_close()
+        super().closeEvent(a0)
 
 
 def _get_config_params(name: str, config: Config or Type[Config]):

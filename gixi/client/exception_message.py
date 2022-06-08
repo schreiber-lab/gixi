@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+
 import sys
 import traceback
 import logging
 
-from .tools import show_error
+from gixi.client.tools import show_error
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -14,12 +15,8 @@ class UncaughtHook(QObject):
     log = logging.getLogger(__name__)
 
     def __init__(self, *args, **kwargs):
-        super(UncaughtHook, self).__init__(*args, **kwargs)
-
-        # this registers the exception_hook() function as hook with the Python interpreter
+        super().__init__(*args, **kwargs)
         sys.excepthook = self.exception_hook
-
-        # connect signal to execute the message box function always on main thread
         self._exception_caught.connect(show_error)
 
     def exception_hook(self, exc_type, exc_value, exc_traceback):
@@ -39,4 +36,3 @@ class UncaughtHook(QObject):
 
             # trigger message box show
             self._exception_caught.emit(log_msg)
-

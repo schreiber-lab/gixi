@@ -4,7 +4,7 @@ import threading
 from contextlib import contextmanager
 from multiprocessing import Queue, Process
 
-from .log_config import set_workers_log
+from gixi.server.log_config import set_workers_log
 
 
 class SharedResources(object):

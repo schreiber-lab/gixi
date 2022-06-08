@@ -12,7 +12,7 @@ from PyQt5.QtCore import (
     pyqtSignal
 )
 
-from .tools import get_folder_filepath
+from gixi.client.tools import get_folder_filepath
 
 
 class FileViewer(QMainWindow):

@@ -1,7 +1,7 @@
 from pathlib import Path
 from collections import OrderedDict
 
-from .config import Config
+from gixi.server.config import Config
 
 PROGRAM_PATH = Path(__file__).parents[2].expanduser().absolute()
 
@@ -23,26 +23,26 @@ class ContrastConfig(Config):
 
 
 class QSpaceConfig(Config):
-    z0: int
-    y0: int
+    z0: int = 0
+    y0: int = 0
 
-    size_x: int
-    size_y: int
+    size_x: int = 2048
+    size_y: int = 2048
 
-    wavelength: float
+    wavelength: float = 0.6888
 
-    pixel_size: float
-    distance: float
+    pixel_size: float = 0.2
+    distance: float = 1000
 
-    incidence_angle: float
+    incidence_angle: float = 0.5
 
-    q_xy_max: float
-    q_z_max: float
+    q_xy_max: float = 2.7
+    q_z_max: float = 2.7
 
-    q_xy_num: int
-    q_z_num: int
+    q_xy_num: int = 1350
+    q_z_num: int = 1350
 
-    flip_y: bool = False
+    flip_y: bool = True
     flip_x: bool = False
 
     CONF_NAME = 'Q Space Parameters'
@@ -118,9 +118,9 @@ class ParallelConfig(Config):
 
 
 class ClusterConfig(Config):
-    partition: str = 'allgpu'
+    partition: str = 'pxs'
     reservation: str = ''
-    time: str = '00:30:00'
+    time: str = '01:00:00'
     nodes: int = 1
     chdir: str = '~/maxwell_output/'
     use_cuda: bool = False
@@ -146,6 +146,13 @@ class SaveConfig(Config):
     save_polar_img: bool = True
     save_scores: bool = True
 
+    CONF_NAME = 'Save Configuration'
+
+    PARAM_DESCRIPTIONS = dict(
+        save_img='Save processed images in q space',
+        save_polar_img='Save processed images in polar space',
+    )
+
 
 class ProgramPathsConfig(Config):
     local_env: bool = False
@@ -166,40 +173,39 @@ class ModelConfig(Config):
 
 
 class JobConfig(Config):
-    folder_name: str
-    data_dir: str
-    dest_name: str
-    config_path: str
-    name: str = 'GIXD_ML'
+    config_path: str = ''
+    folder_name: str = ''
+    data_dir: str = ''
+    dest_name: str = ''
+    name: str = 'gixi'
 
     CONF_NAME = 'Data Paths'
 
     PARAM_DESCRIPTIONS = dict(
+        config_path='Configuration file name',
         folder_name='Raw data folder name (relative to data_dir/raw/)',
         data_dir='Path to the root directory of the measurements (data_dir)',
         dest_name='H5 file name for storing the results (stored to data_dir/processed/)',
-        config_path='Path to the configuration file (relative to program_dir/)',
         name='Name of the job',
     )
 
 
 class AppConfig(Config):
-    general: GeneralConfig
-    job_config: JobConfig
-    cluster_config: ClusterConfig
-    q_space: QSpaceConfig
-    contrast: ContrastConfig
-    parallel: ParallelConfig
-    polar_config: PolarConversionConfig
-    postprocessing_config: PostProcessingConfig
-    save_config: SaveConfig
+    general: GeneralConfig = GeneralConfig()
+    job_config: JobConfig = JobConfig()
+    cluster_config: ClusterConfig = ClusterConfig()
+    q_space: QSpaceConfig = QSpaceConfig()
+    contrast: ContrastConfig = ContrastConfig()
+    parallel: ParallelConfig = ParallelConfig()
+    polar_config: PolarConversionConfig = PolarConversionConfig()
+    postprocessing_config: PostProcessingConfig = PostProcessingConfig()
+    save_config: SaveConfig = SaveConfig()
     model_config: ModelConfig = ModelConfig()
     program_paths_config: ProgramPathsConfig = ProgramPathsConfig()
 
     GUI_CONFIG_GROUPS = OrderedDict(
         job_config=JobConfig,
         general=GeneralConfig,
-        save_config=SaveConfig,
         cluster_config=ClusterConfig,
         q_space=QSpaceConfig,
         contrast=ContrastConfig,
@@ -207,6 +213,7 @@ class AppConfig(Config):
         polar_config=PolarConversionConfig,
         postprocessing_config=PostProcessingConfig,
         model_config=ModelConfig,
+        save_config=SaveConfig,
     )
 
     def copy(self):

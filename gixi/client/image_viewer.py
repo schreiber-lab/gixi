@@ -2,8 +2,8 @@ import numpy as np
 
 from PyQt5.QtCore import pyqtSlot
 
-from .basic_widgets import Viewer2D
-from .rois import BasicRoiRing
+from gixi.client.basic_widgets import Viewer2D
+from gixi.client.rois import BasicRoiRing
 
 
 class ImageViewer(Viewer2D):
