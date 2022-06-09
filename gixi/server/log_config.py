@@ -55,9 +55,9 @@ def get_log_config(level) -> dict:
     }
 
 
-def set_workers_log(logger_queue, level):
+def set_workers_log(logger_queue, level: int = logging.INFO):
     log_config = get_log_config(level)
-    standard_fmt = log_config['formatters']['standard']
+    standard_fmt = log_config['formatters']['standard' if level != logging.DEBUG else 'standard_debug']
     standard_fmt['fmt'] = standard_fmt.pop('format')
     fmt = logging.Formatter(**standard_fmt)
 

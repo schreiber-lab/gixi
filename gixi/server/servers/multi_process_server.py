@@ -1,12 +1,12 @@
 import logging
-import multiprocessing
 from time import perf_counter
 from functools import lru_cache
 
 from queue import Empty
+import multiprocessing
+from multiprocessing import Manager
 
 import torch
-from multiprocessing import Manager
 
 from .basicserver import BasicServer, AppConfig
 
@@ -42,7 +42,8 @@ class MultiProcessServer(BasicServer):
                 FastServer,
                 self.resources,
                 self.methods,
-                config=self.config.asdict()
+                log_level=self.config.log_config.log_level,
+                config=self.config.asdict(),
         ):
             self.model.run()
             self.log.info(str(self.save_time_records()))
@@ -148,7 +149,6 @@ class FastServer(Workers):
                 img_paths = self.resources.paths_queue.get(timeout=timeout)
                 self.time_recorder.end_record()
             except (OSError, ValueError, Empty):
-                self.log.debug(f'paths_queue empty, continue.')
                 self.time_recorder.end_record('timeout')
                 continue
 
@@ -179,8 +179,7 @@ class FastServer(Workers):
                 self.time_recorder.end_record()
             except (OSError, ValueError, Empty):
                 self.time_recorder.end_record('timeout')
-
-                self.log.debug(f'results_queue empty, continue.')
+                # self.log.debug(f'results_queue empty, continue.')
                 continue
             try:
                 save_data(data_list)

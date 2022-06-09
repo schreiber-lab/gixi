@@ -48,13 +48,14 @@ class Workers(object):
         self.log = None
         self.method_name = None
 
-    def _init_logger(self, logger_queue):
-        set_workers_log(logger_queue, self.LOG_LEVEL)
+    @staticmethod
+    def _init_logger(logger_queue, log_level: int):
+        set_workers_log(logger_queue, log_level)
 
-    def init(self, worker: int, logger_queue: Queue, resources: SharedResources):
+    def init(self, worker: int, logger_queue: Queue, resources: SharedResources, log_level: int):
         self.worker = worker
         self.resources = resources
-        self._init_logger(logger_queue)
+        self._init_logger(logger_queue, log_level)
         self.log = logging.getLogger('server')
 
     def on_start(self, **kwargs):
@@ -63,8 +64,8 @@ class Workers(object):
     def on_stop(self, **kwargs):
         pass
 
-    def __call__(self, worker: int, logger_queue: Queue, resources: SharedResources, kwargs: dict):
-        self.init(worker, logger_queue, resources)
+    def __call__(self, worker: int, logger_queue: Queue, resources: SharedResources, kwargs: dict, log_level: int):
+        self.init(worker, logger_queue, resources, log_level)
         try:
             self.method_name = resources.message_queue.get_nowait()
         except Empty:
@@ -73,11 +74,14 @@ class Workers(object):
 
         method = getattr(self, self.method_name, self.unknown_method)
 
-        self.log.debug(f'Starting process for {self.method_name}')
+        process_id = multiprocessing.current_process()
+
+        self.log.debug(f'Starting {self.method_name} {process_id}')
 
         try:
             self.on_start(**kwargs)
             method(**kwargs)
+            self.log.debug(f'Finish {self.method_name} {process_id}')
             self.on_stop(**kwargs)
         except Exception as err:
             self.log.exception(err)
@@ -91,13 +95,14 @@ class Workers(object):
 def run_pool(workers: Type[Workers],
              resources: SharedResources,
              worker_methods: List[str],
+             log_level: int = logging.INFO,
              **kwargs):
     with _set_logger_queue() as logger_queue:
         for method in worker_methods:
             resources.message_queue.put_nowait(method)
         processes = [
             Process(target=workers(),
-                    args=(worker, logger_queue, resources, kwargs))
+                    args=(worker, logger_queue, resources, kwargs, log_level))
             for worker in range(len(worker_methods))
         ]
 
