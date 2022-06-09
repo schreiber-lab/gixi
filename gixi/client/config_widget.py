@@ -109,9 +109,10 @@ class ConfigWidget(QWidget):
 
     @pyqtSlot()
     def _save_config(self):
+        self._update_current_config()
         config = self.parameter_tree.app_config
         path = Path(config.job_config.config_path)
-        self.logger.info(f'Saving new config to {str(path)}')
+        self.logger.debug(f'Saving new config to {str(path)}')
         config.save_to_config(path)
         self.logger.info(f'Config is saved to {str(path)}')
         self.config_list.update_paths()
