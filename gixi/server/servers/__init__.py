@@ -1,18 +1,20 @@
 import logging
 
-from .single_threaded_server import SingleThreadedServer
-from .multi_threaded_server import MultiThreadedServer
-from .basicserver import BasicServer
+from gixi.server.log_config import set_log_config
+from gixi.server.app_config import AppConfig
 
-from ..app_config import AppConfig
+from .single_process_server import SingleProcessServer
+from .multi_process_server import MultiProcessServer
+from .basicserver import BasicServer
 
 
 def run_server(app_config: AppConfig):
-    logging.getLogger(__name__).info(f'Start server from config: {app_config}.')
+    set_log_config()
+    logging.getLogger(__name__).info(f'Starting server from config: {app_config.job_config.config_path}.')
 
     if app_config.parallel.parallel_computation:
-        server = MultiThreadedServer(app_config)
+        server = MultiProcessServer(app_config)
     else:
-        server = SingleThreadedServer(app_config)
+        server = SingleProcessServer(app_config)
 
     server.run()

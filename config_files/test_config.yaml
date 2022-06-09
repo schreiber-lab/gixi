@@ -19,7 +19,7 @@ job_config:
   config_path: test_config.yaml
   data_dir: ~/local_scripts/gixi/tests/data
   dest_name: test_data.h5
-  folder_name: dset23
+  folder_name: dset1
   name: gixi_test
 model_config:
   name: save_only_largest_2

@@ -11,9 +11,13 @@ _LOG_CONFIG: dict = {
         'server': {
             'format': '%(message)s',
         },
-        'standard': {
+        'standard_debug': {
             'format': '%(levelname)s %(asctime)s.%(msecs)03d %(filename)s:%(lineno)s'
                       ' %(funcName)s(%(process)s): %(message)s',
+            'datefmt': "%H:%M:%S",
+        },
+        'standard': {
+            'format': '%(asctime)s.%(msecs)03d : %(message)s',
             'datefmt': "%H:%M:%S",
         },
     },
@@ -32,7 +36,7 @@ _LOG_CONFIG: dict = {
     'loggers': {
         '': {
             'handlers': ['standard'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         '__main__': {
@@ -42,7 +46,7 @@ _LOG_CONFIG: dict = {
         },
         'server': {
             'handlers': ['server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
     }
@@ -63,3 +67,4 @@ def set_workers_log(logger_queue, level):
 
 def set_log_config():
     logging.config.dictConfig(_LOG_CONFIG)
+    logging.getLogger(__name__).debug('log config is set')

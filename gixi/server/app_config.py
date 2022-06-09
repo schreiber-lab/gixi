@@ -105,6 +105,20 @@ class PolarConversionConfig(Config):
     )
 
 
+class LogConfig(Config):
+    record_time: bool = False
+    record_filename: str = 'time_records.pt'
+    log_level: int = 'INFO'
+
+    PARAM_DESCRIPTIONS = dict(
+        record_time='Record time used for each process on the cluster'
+    )
+
+    @property
+    def no_time_record(self) -> bool:
+        return not self.record_time
+
+
 class ParallelConfig(Config):
     parallel_computation: bool = False
     max_batch: int = 64
@@ -124,6 +138,7 @@ class ClusterConfig(Config):
     nodes: int = 1
     chdir: str = '~/maxwell_output/'
     use_cuda: bool = False
+    max_cores: int = -1
 
     CONF_NAME = 'Cluster Configuration'
 
@@ -133,6 +148,7 @@ class ClusterConfig(Config):
         time='Max job time in format HH:MM:SS',
         chdir='Directory to store job logs',
         use_cuda='Use CUDA acceleration (use only for partitions with gpu support)',
+        max_cores='Max number of cpu cores (use all the cores for non-positive values)',
     )
 
     @property
@@ -201,6 +217,7 @@ class AppConfig(Config):
     postprocessing_config: PostProcessingConfig = PostProcessingConfig()
     save_config: SaveConfig = SaveConfig()
     model_config: ModelConfig = ModelConfig()
+    log_config: LogConfig = LogConfig()
     program_paths_config: ProgramPathsConfig = ProgramPathsConfig()
 
     GUI_CONFIG_GROUPS = OrderedDict(
@@ -214,6 +231,7 @@ class AppConfig(Config):
         postprocessing_config=PostProcessingConfig,
         model_config=ModelConfig,
         save_config=SaveConfig,
+        log_config=LogConfig,
     )
 
     def copy(self):

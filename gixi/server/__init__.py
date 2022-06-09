@@ -1,8 +1,8 @@
-from .models_collection import get_basic_model_1
-from .tools import get_image_prediction, img2torch, read_image
-from .img_processing import *
-from .log_config import set_log_config
-from .app_config import (
+from gixi.server.models_collection import get_basic_model_1
+from gixi.server.tools import get_image_prediction, img2torch, read_image
+from gixi.server.img_processing import *
+from gixi.server.log_config import set_log_config
+from gixi.server.app_config import (
     AppConfig,
     ParallelConfig,
     GeneralConfig,
@@ -13,5 +13,5 @@ from .app_config import (
     PolarConversionConfig,
     SaveConfig,
 )
-from .config import Config
-from .run import run, run_server
+from gixi.server.config import Config
+from gixi.server.run import run, run_server

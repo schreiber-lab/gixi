@@ -1,12 +1,16 @@
 from typing import List
 from pathlib import Path
 
+from gixi.server.time_record import TimeRecorder
+
 from ..h5utils import H5FileManager
 from ..app_config import AppConfig, SaveConfig
 
 
 class SaveData(object):
-    def __init__(self, config: AppConfig):
+    def __init__(self, config: AppConfig, time_recorder: TimeRecorder = None):
+        self.time_recorder = time_recorder or TimeRecorder('save_data', no_record=config.log_config.no_time_record)
+
         self.save_config = config.save_config
         self._keys = _init_save_keys(self.save_config)
         self.src_path = config.src_path
@@ -20,13 +24,15 @@ class SaveData(object):
     def save_data(self, data_dict: dict):
         if not data_dict:
             return
+
         paths = data_dict.pop('paths')
         path_names = ','.join(_get_path_name(p, self.src_path) for p in paths)
 
         if data_dict:
-            file_name = _get_path_name(paths[0], self.src_path)
-            data_dict = {k: data_dict[k] for k in self._keys}
-            self.h5file.save(self.group_name, file_name, data_dict, attrs=dict(paths=path_names))
+            with self.time_recorder():
+                file_name = _get_path_name(paths[0], self.src_path)
+                data_dict = {k: data_dict[k] for k in self._keys}
+                self.h5file.save(self.group_name, file_name, data_dict, attrs=dict(paths=path_names))
 
 
 def _get_path_name(path: Path, rel_folder: Path) -> str:

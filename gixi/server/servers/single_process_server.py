@@ -3,15 +3,17 @@ from typing import Tuple, List
 import logging
 from pathlib import Path
 
-from ..app_config import AppConfig
-from ..server_operations import FeatureDetector, ProcessImages
+from gixi.server.app_config import AppConfig
+from gixi.server.server_operations import FeatureDetector, ProcessImages
+from gixi.server.time_record import TimeRecorder
+
 from .basicserver import BasicServer
 from .image_path_gen import ImagePathGen
 
 from .save_data import SaveData
 
 
-class SingleThreadedServer(BasicServer):
+class SingleProcessServer(BasicServer):
     def __init__(self, config: AppConfig):
         super().__init__(config)
 
@@ -28,7 +30,7 @@ class SingleThreadedServer(BasicServer):
         self.save_data = SaveData(config)
 
     def run(self):
-        self.log.info(f'Run single-threaded server with config: {self.config}')
+        self.log.debug(f'Run single-process server.')
 
         batch = []
 
@@ -42,7 +44,17 @@ class SingleThreadedServer(BasicServer):
         if batch:
             self.process_file(batch)
 
-        self.log.info('Run is completed!')
+        if self.config.log_config.record_time:
+            self.log.info(str(self.save_time_records()))
+
+    def get_time_recorder(self) -> TimeRecorder:
+        time_recorder = (
+                self.process_images.time_recorder +
+                self.detector.time_recorder +
+                self.save_data.time_recorder +
+                self.image_path_gen.time_recorder
+        )
+        return time_recorder
 
     def process_file(self, batch: List[Tuple[Path, ...]]):
         if not batch:
