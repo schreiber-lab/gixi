@@ -108,12 +108,13 @@ class PolarConversionConfig(Config):
 class LogConfig(Config):
     record_time: bool = False
     record_filename: str = 'time_records.pt'
-    log_level: int = 'INFO'
+    log_level: str = 'INFO'
 
     CONF_NAME = 'Logging Parameters'
 
     PARAM_DESCRIPTIONS = dict(
-        record_time='Record time used for each process on the cluster'
+        record_time='Record time used for each process on the cluster',
+        log_level='Log level',
     )
 
     @property
