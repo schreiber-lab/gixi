@@ -110,6 +110,8 @@ class LogConfig(Config):
     record_filename: str = 'time_records.pt'
     log_level: int = 'INFO'
 
+    CONF_NAME = 'Logging Parameters'
+
     PARAM_DESCRIPTIONS = dict(
         record_time='Record time used for each process on the cluster'
     )
