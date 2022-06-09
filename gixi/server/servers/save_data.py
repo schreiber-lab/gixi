@@ -36,6 +36,7 @@ class SaveData(object):
 
 
 def _get_path_name(path: Path, rel_folder: Path) -> str:
+    # TODO: support other formats than .tif
     return str(path.relative_to(rel_folder)).split('.tif')[0]
 
 
