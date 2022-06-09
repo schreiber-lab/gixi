@@ -37,7 +37,7 @@ class H5FileManager(object):
                 f.create_group(folder_name)
             group = init_img_group(file_name, f[folder_name])
             save_image_data(data_dict, group, attrs)
-            self.log.info(f'Saved {folder_name}/{file_name}.')
+            self.log.info(f'Saved image {folder_name}/{file_name}')
 
     def read(self, image_key: str) -> dict or None:
         try:

@@ -56,7 +56,7 @@ class FastServerResources(SharedResources):
         manager = Manager()
         super().__init__(manager)
 
-        self.timeout = config.cluster_config.timeout
+        self.timeout = config.cluster_config.timeout * 0.9  # finish the job nicely before the job is terminated
         self.start_time = perf_counter()
         self._num_found_images = manager.Value('i', 0)
         self._num_saved_images = manager.Value('i', 0)
