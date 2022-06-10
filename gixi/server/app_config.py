@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from collections import OrderedDict
 
@@ -108,14 +109,19 @@ class PolarConversionConfig(Config):
 class LogConfig(Config):
     record_time: bool = False
     record_filename: str = 'time_records.pt'
-    log_level: str = 'INFO'
+    debug: bool = False
 
     CONF_NAME = 'Logging Parameters'
 
     PARAM_DESCRIPTIONS = dict(
         record_time='Record time used for each process on the cluster',
-        log_level='Log level',
+        debug='Turn on logs for debugging',
     )
+
+    @property
+    def log_level(self) -> int:
+        level = 'DEBUG' if self.debug else 'INFO'
+        return logging.getLevelName(level)
 
     @property
     def no_time_record(self) -> bool:
