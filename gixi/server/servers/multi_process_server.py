@@ -20,7 +20,6 @@ from gixi.server.time_record import TimeRecorder
 class MultiProcessServer(BasicServer):
     def __init__(self, config: AppConfig):
         super().__init__(config)
-        FastServer.LOG_LEVEL = config.log_config.log_level
 
         self.log = logging.getLogger(__name__)
         self.resources = FastServerResources(config)
@@ -151,8 +150,6 @@ class FastServer(Workers):
             except (OSError, ValueError, Empty):
                 self.time_recorder.end_record('timeout')
                 continue
-
-            self.log.debug(f'Processing {str(img_paths)}.')
 
             self.time_recorder.start_record('process_imgs')
             data = process(img_paths)

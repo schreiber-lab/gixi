@@ -40,7 +40,6 @@ class SharedResources(object):
 
 
 class Workers(object):
-    LOG_LEVEL: int = logging.INFO
 
     def __init__(self):
         self.worker = None
