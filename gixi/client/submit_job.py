@@ -21,7 +21,7 @@ def generate_sh_str(config: AppConfig) -> str:
 {partition}
 #SBATCH --chdir {str(Path(config.cluster_config.chdir).expanduser())}
 #SBATCH --nodes={config.cluster_config.nodes}
-#SBATCH --job-name {config.job_config.name}_{config.job_config.folder_name}
+#SBATCH --job-name {config.job_config.id_name}
 #SBATCH --time={config.cluster_config.time}
 #SBATCH --output {get_conf_out(config)}
 #SBATCH --error {get_conf_err(config)}

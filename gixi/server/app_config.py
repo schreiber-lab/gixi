@@ -219,6 +219,10 @@ class JobConfig(Config):
         name='Name of the job',
     )
 
+    @property
+    def id_name(self) -> str:
+        return f'{self.name}_{self.folder_name}'
+
 
 class AppConfig(Config):
     general: GeneralConfig = GeneralConfig()
@@ -286,5 +290,5 @@ class AppConfig(Config):
     @property
     def log_filename(self) -> str or None:
         if self.log_config.log_to_file:
-            filename = self.job_config.name + '.log'
+            filename = self.job_config.id_name + '.log'
             return str(SERVER_LOGS_PATH / filename)
