@@ -39,7 +39,7 @@ class ImagePathGen(object):
         unprocessed_paths = paths[self._num_processed_imgs:]
         path_batch = unprocessed_paths[:self.sum_images]
 
-        if len(path_batch) < self.sum_images and wait_for_full_batch:
+        if not path_batch or (len(path_batch) < self.sum_images and wait_for_full_batch):
             return ()
         else:
             self._num_processed_imgs += len(path_batch)
