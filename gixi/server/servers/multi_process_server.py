@@ -211,6 +211,10 @@ class FastModelPrediction(object):
                     break
             if not data_list:
                 self.log.debug(f'Data list is empty, continue waiting for new data.')
+                self.log.debug(f'is_stopped={self.resources.is_stopped}\n'
+                               f'num_found_images={self.resources.num_found_images}\n'
+                               f'num_saved_images={self.resources.num_saved_images}\n'
+                               f'results_queue empty: {self.resources.results_queue.empty()}')
                 continue
             try:
                 with self.time_recorder('detect'):
