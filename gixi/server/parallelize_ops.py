@@ -1,14 +1,13 @@
 import sys
 from typing import List, Type
 import logging
+from logging.handlers import QueueHandler
 import threading
 from contextlib import contextmanager
 from queue import Empty
 
 import multiprocessing
 from multiprocessing import Queue, Process
-
-from gixi.server.log_config import set_workers_log
 
 
 class SharedResources(object):
@@ -49,7 +48,7 @@ class Workers(object):
 
     @staticmethod
     def _init_logger(logger_queue, log_level: int):
-        set_workers_log(logger_queue, log_level)
+        _set_workers_log(logger_queue, log_level)
 
     def init(self, worker: int, logger_queue: Queue, resources: SharedResources, log_level: int):
         self.worker = worker
@@ -143,6 +142,14 @@ def _logger_thread(q):
             break
         logger = logging.getLogger(record.name)
         logger.handle(record)
+
+
+
+def _set_workers_log(logger_queue, level: int = logging.INFO):
+    qh = QueueHandler(logger_queue)
+    root = logging.getLogger()
+    root.setLevel(level)
+    root.addHandler(qh)
 
 
 def _terminate_excepthook(exc_type, exc_value, exc_traceback):

@@ -1,19 +1,27 @@
 import logging
 import logging.config
-from logging.handlers import QueueHandler
 
-__all__ = ['set_log_config', 'set_workers_log']
+__all__ = [
+    'set_log_config',
+]
 
 
-def get_log_config(level) -> dict:
+def _get_log_config(level, filename: str = None) -> dict:
+    if level in (logging.DEBUG, 'DEBUG'):
+        fmt = 'debug'
+    else:
+        fmt = 'standard'
+
+    if filename:
+        handlers = ['file', 'console']
+    else:
+        handlers = ['console']
+
     return {
         'version': 1,
         'disable_existing_loggers': True,
         'formatters': {
-            'server': {
-                'format': '%(message)s',
-            },
-            'standard_debug': {
+            'debug': {
                 'format': '%(levelname)s %(asctime)s.%(msecs)03d %(filename)s:%(lineno)s'
                           ' %(funcName)s(%(process)s): %(message)s',
                 'datefmt': "%H:%M:%S",
@@ -24,30 +32,27 @@ def get_log_config(level) -> dict:
             },
         },
         'handlers': {
-            'standard': {
+            'console': {
+                'formatter': fmt,
                 'level': level,
-                'formatter': 'standard',
                 'class': 'logging.StreamHandler',
             },
-            'server': {
+            'file': {
+                'formatter': fmt,
                 'level': level,
-                'formatter': 'server',
-                'class': 'logging.StreamHandler',
+                'class': 'logging.FileHandler',
+                'filename': filename,
+                'mode': 'w',
             },
         },
         'loggers': {
             '': {
-                'handlers': ['standard'],
+                'handlers': handlers,
                 'level': level,
                 'propagate': False,
             },
             '__main__': {
-                'handlers': ['standard'],
-                'level': level,
-                'propagate': False,
-            },
-            'server': {
-                'handlers': ['server'],
+                'handlers': handlers,
                 'level': level,
                 'propagate': False,
             },
@@ -55,23 +60,6 @@ def get_log_config(level) -> dict:
     }
 
 
-def set_workers_log(logger_queue, level: int = logging.INFO):
-    log_config = get_log_config(level)
-    standard_fmt = log_config['formatters']['standard' if level != logging.DEBUG else 'standard_debug']
-    standard_fmt['fmt'] = standard_fmt.pop('format')
-    fmt = logging.Formatter(**standard_fmt)
-
-    qh = QueueHandler(logger_queue)
-    qh.setFormatter(fmt)
-    root = logging.getLogger('server')
-    root.setLevel(level)
-    root.addHandler(qh)
-
-
-def set_log_config(level: int = logging.INFO):
-    conf_dict = get_log_config(level)
-    if level == logging.DEBUG:
-        conf_dict['formatters']['standard'] = conf_dict['formatters']['standard_debug']
-
-    logging.config.dictConfig(conf_dict)
-    logging.getLogger(__name__).debug('log config is set')
+def set_log_config(level: int = logging.INFO, filename: str = None):
+    logging.config.dictConfig(_get_log_config(level, filename=filename))
+    logging.getLogger(__name__).debug(f'log config is set with level={level} and filename={filename}.')
