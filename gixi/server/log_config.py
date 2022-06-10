@@ -27,7 +27,7 @@ def _get_log_config(level, filename: str = None) -> dict:
                 'datefmt': "%H:%M:%S",
             },
             'standard': {
-                'format': '%(asctime)s.%(msecs)03d : %(message)s',
+                'format': '%(levelname)s %(asctime)s.%(msecs)03d : %(message)s',
                 'datefmt': "%H:%M:%S",
             },
         },

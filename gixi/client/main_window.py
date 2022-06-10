@@ -7,7 +7,7 @@ from pyqtgraph.dockarea import DockArea, Dock
 
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from gixi.client.logs import QtLogWidgetHolder, set_log_config
+from gixi.client.logs import QtLogWidgetHolder, set_log_config, ServerLogWidget
 from gixi.client.data_holder import DataHolder
 from gixi.client.file_tab import FileTab
 from gixi.client.image_tab import ImageTab
@@ -54,6 +54,7 @@ class MainWidget(DockArea):
         self.data_controller = DataHolder(self)
         self.file_tab = FileTab(base_dir, self)
         self.log_holder = QtLogWidgetHolder(self)
+        self.server_log = ServerLogWidget(parent=self)
         self.image_tab = ImageTab(self)
         self.radial_profiles = RadialProfilesWidget(self)
         self.submit_job_window = ConfigWidget(self.data_controller.current_config, self)
@@ -64,15 +65,16 @@ class MainWidget(DockArea):
 
     def _init_ui(self):
         self._add_dock(self.file_tab, 'FileTab')
-        self._add_dock(self.log_holder.widget, 'Logs', position='bottom', size=(10, 100))
+        self._add_dock(self.log_holder.widget, 'Client Logs', position='bottom', size=(10, 100))
+        self._add_dock(self.server_log, 'Server Logs', position='right', relativeTo=self.docks['Client Logs'])
         self._add_dock(self.image_tab, 'ImageTab', position='right', size=(500, 500))
         self._add_dock(self.radial_profiles, 'RadialProfiles', position='right', size=(500, 500))
         self._hide_dock_callable('RadialProfiles')()
 
-    def _add_dock(self, widget, name, size: tuple = (200, 200), position: str = 'right'):
+    def _add_dock(self, widget, name, size: tuple = (200, 200), position: str = 'right', relativeTo=None):
         dock = Dock(name)
         dock.addWidget(widget)
-        self.addDock(dock, size=size, position=position)
+        self.addDock(dock, size=size, position=position, relativeTo=relativeTo)
         self.docks[name] = dock
 
     def _hide_dock_callable(self, name):

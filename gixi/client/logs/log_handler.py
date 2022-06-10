@@ -14,6 +14,14 @@ class QtLogHandler(logging.Handler):
         self.append_log(self.format(record))
 
 
+def process_server_logs(lines):
+    html = []
+    for line in lines:
+        level, *message = line.split()
+        html.append(_set_html_color(' '.join(message), level))
+    return '\n'.join(html)
+
+
 _LOG_COLOR_DICT = dict(DEBUG='green', INFO='black', WARNING='yellow', ERROR='red')
 
 
