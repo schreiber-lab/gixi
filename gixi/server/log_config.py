@@ -40,7 +40,7 @@ def _get_log_config(level, filename: str = None) -> dict:
             'file': {
                 'formatter': fmt,
                 'level': level,
-                'class': 'logging.FileHandler',
+                'class': 'logging.handlers.RotatingFileHandler',
                 'filename': filename,
                 'mode': 'w',
             },
