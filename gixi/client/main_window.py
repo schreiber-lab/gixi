@@ -105,6 +105,7 @@ class MainWidget(DockArea):
         self.data_controller.sigCifProfileUpdated.connect(self.radial_profiles.set_cif_profile)
         self.data_controller.sigCifProfileUpdated.connect(self._show_dock_callable('RadialProfiles'))
         self.submit_job_window.sigSubmitJobClicked.connect(self.data_controller.submit_job)
+        self.submit_job_window.sigCurrentConfigUpdated.connect(self.server_log.set_config)
 
 
 def parse_args():

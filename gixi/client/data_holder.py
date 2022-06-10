@@ -100,6 +100,10 @@ class DataHolder(QObject):
         if len(dset.shape) == 2:
             self.sigImageUpdated.emit(dset)
 
+    @pyqtSlot(AppConfig)
+    def set_config(self, config: AppConfig):
+        self.current_config = config
+
 
 def read_image(path):
     return np.array(Image.open(path))
