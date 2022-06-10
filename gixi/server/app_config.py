@@ -4,7 +4,11 @@ from collections import OrderedDict
 
 from gixi.server.config import Config
 
-PROGRAM_PATH = Path(__file__).parents[2].expanduser().absolute()
+PROGRAM_PATH = Path(__file__).parents[2].absolute()
+SERVER_LOGS_PATH = PROGRAM_PATH / 'server_logs'
+
+# Yes, it does create a folder on import.
+SERVER_LOGS_PATH.mkdir(exist_ok=True)
 
 
 class ContrastConfig(Config):
@@ -110,6 +114,7 @@ class LogConfig(Config):
     record_time: bool = False
     record_filename: str = 'time_records.pt'
     debug: bool = False
+    log_to_file: bool = True
 
     CONF_NAME = 'Logging Parameters'
 
@@ -277,3 +282,9 @@ class AppConfig(Config):
     @property
     def device(self):
         return 'cuda' if self.cluster_config.use_cuda else 'cpu'
+
+    @property
+    def log_filename(self) -> str or None:
+        if self.log_config.log_to_file:
+            filename = self.job_config.name + '.log'
+            return str(SERVER_LOGS_PATH / filename)
