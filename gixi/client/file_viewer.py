@@ -241,7 +241,7 @@ class FolderItem(QStandardItem):
         paths = sorted(list(self.path.glob('*')))
 
         if len(paths) < len(self._paths) or self._paths.difference(paths):
-            self.update()
+            self._full_update()
             return
 
         for path in paths:
@@ -249,9 +249,12 @@ class FolderItem(QStandardItem):
                 self._paths.add(path)
                 self.insertRow(0, _get_item_row(path))
 
-    def update(self):
+    def _full_update(self):
         self.clear()
         self._fill()
+
+    def update(self):
+        self._fast_fill()
 
     def clear(self):
         self._paths.clear()
