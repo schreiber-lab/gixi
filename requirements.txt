@@ -11,4 +11,3 @@ opencv-python==4.1.2.30
 periodictable
 crystals
 h5py
-qmap_interpolation

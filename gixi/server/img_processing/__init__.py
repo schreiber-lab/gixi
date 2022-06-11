@@ -1,6 +1,5 @@
-from .utils import normalize, with_probability
-from .he import torch_he
-from .angle_limits import AngleLimits
-from .polar_interpolation import PolarInterpolation, calc_polar_image
-from .contrast_correction import ContrastCorrection
-from .q_space import QInterpolation
+from gixi.server.img_processing.utils import normalize, with_probability
+from gixi.server.img_processing.he import torch_he
+from gixi.server.img_processing.angle_limits import AngleLimits
+from gixi.server.img_processing.contrast_correction import ContrastCorrection
+from gixi.server.img_processing.conversions import QInterpolation, PolarInterpolation

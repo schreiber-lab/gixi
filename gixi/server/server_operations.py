@@ -60,10 +60,9 @@ class ProcessImages(object):
         self.log = logging.getLogger(__name__)
         self.device: torch.device = config.device
         self.config = config
-        self.q_config = config.q_space
 
         self.contrast = ContrastCorrection(config.contrast)
-        self.q_interp = QInterpolation(self.q_config)
+        self.q_interp = QInterpolation(config)
         self.p_interp = PolarInterpolation(config)
 
     def polar_interpolation(self, img: np.ndarray):
@@ -76,22 +75,19 @@ class ProcessImages(object):
                 warnings.simplefilter('ignore', category=RuntimeWarning)
                 return self.q_interp(img)
 
-    @property
-    def expected_shape(self) -> tuple:
-        return self.q_interp.config.size_y, self.q_interp.config.size_x
-
     def __call__(self, img_paths: Tuple[Path, ...]) -> Dict[str, np.ndarray] or None:
         try:
             with self.time_recorder('read'):
                 img = np.sum([read_image(path) for path in img_paths], 0)
 
-            if img.shape != self.expected_shape:
+            if img.shape != self.q_interp.expected_shape:
                 return
 
-            img = self.q_interpolation(self.contrast(img))
+            img = self.contrast(img)
+            q_img = self.q_interpolation(img)
             polar_img = self.polar_interpolation(img)
 
-            return {'img': img, 'polar_img': polar_img, 'paths': img_paths}
+            return {'img': q_img, 'polar_img': polar_img, 'paths': img_paths}
         except Exception as err:
             self.log.exception(err)
             return
