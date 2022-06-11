@@ -70,6 +70,7 @@ class FileTree(QTreeView):
         self.log = logging.getLogger(__name__)
         self._model = FileModel(Path(base_path))
         self.setModel(self._model)
+        self._model.sigSelect.connect(self._select_item)
         self.setEditTriggers(QTreeView.NoEditTriggers)
 
         self.setSelectionMode(self.SingleSelection)
@@ -96,6 +97,10 @@ class FileTree(QTreeView):
     def set_base_path(self, path):
         path = Path(path)
         self._model.update_root(path)
+
+    @pyqtSlot(QStandardItem)
+    def _select_item(self, item: QStandardItem):
+        self.setCurrentIndex(item.index())
 
     def update_selected_folder(self):
         indices = self.selectionModel().selectedIndexes()
@@ -155,6 +160,8 @@ class FileTree(QTreeView):
 
 
 class FileModel(QStandardItemModel):
+    sigSelect = pyqtSignal(QStandardItem)
+
     def __init__(self, root_path: Path = None):
         super().__init__()
         self.setHorizontalHeaderLabels(['Name', 'Type', 'Size', 'Date Modified'])
@@ -213,7 +220,7 @@ class FolderItem(QStandardItem):
     def turn_on_autoupdate(self):
         if not self._timer:
             self._timer = QTimer()
-            self._timer.timeout.connect(self._fast_fill)
+            self._timer.timeout.connect(self._fill_update)
 
         self._timer.start(1000)
         self.setBackground(QColor('red'))
@@ -237,17 +244,30 @@ class FolderItem(QStandardItem):
             self._paths.add(path)
             self.insertRow(0, _get_item_row(path))
 
-    def _fast_fill(self):
+    def _fast_fill(self) -> Path or None:
         paths = sorted(list(self.path.glob('*')))
 
         if len(paths) < len(self._paths) or self._paths.difference(paths):
             self._full_update()
             return
 
-        for path in sorted(list(set(paths).difference(self._paths))):
-            self.insertRow(0, _get_item_row(path))
+        new_paths = set(paths).difference(self._paths)
 
-        self._paths.update(paths)
+        path = None
+
+        if new_paths:
+
+            for path in sorted(list(new_paths)):
+                self.insertRow(0, _get_item_row(path))
+
+            self._paths.update(paths)
+
+            return path
+
+    def _fill_update(self):
+        path = self._fast_fill()
+        if path:
+            self.model().sigSelect.emit(self.child(0, 0))
 
     def _full_update(self):
         self.clear()
