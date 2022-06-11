@@ -114,7 +114,6 @@ class FileTree(QTreeView):
 
     def _on_clicked(self, index):
         item = self._model.item_from_index(index)
-        print(item)
 
         if isinstance(item, FileItem):
             self._on_file_clicked(item)
@@ -252,13 +251,3 @@ def get_size_str(n_bytes):
 
 def _get_file_type(path: Path):
     return path.suffix[1:] + ' File'
-
-
-if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
-
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    q_app = QApplication([])
-
-    widget = FileViewer()
-    q_app.exec_()
