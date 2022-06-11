@@ -1,32 +1,29 @@
 import logging
 from pathlib import Path
-
-from PyQt5.QtWidgets import (
-    QFileSystemModel,
-    QTreeView,
-    QWidget,
-    QMainWindow,
-    QVBoxLayout
-)
-from PyQt5.QtCore import (
-    pyqtSignal,
-    pyqtSlot,
-)
-
-from gixi.client.tools import get_folder_filepath
-
-from pathlib import Path
 import os
 from datetime import datetime as dt
 
+from PyQt5.QtCore import (
+    pyqtSignal,
+    pyqtSlot,
+    QTimer,
+    Qt,
+)
+
 from PyQt5.QtWidgets import (
+    QMainWindow,
     QTreeView,
     QMenu,
     QShortcut,
 )
-from PyQt5.QtGui import QStandardItem, QStandardItemModel, QKeySequence
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import (
+    QStandardItem,
+    QStandardItemModel,
+    QKeySequence,
+    QColor,
+)
 
+from gixi.client.tools import get_folder_filepath
 from gixi.client.tools import Icon
 
 
@@ -147,6 +144,13 @@ class FileTree(QTreeView):
         update_folder = menu.addAction('Update folder')
         update_folder.triggered.connect(item.update)
 
+        if item.autoupdate_is_on():
+            turn_off = menu.addAction('Turn off autoupdate')
+            turn_off.triggered.connect(item.turn_off_autoupdate)
+        else:
+            turn_on = menu.addAction('Turn on autoupdate')
+            turn_on.triggered.connect(item.turn_on_autoupdate)
+
         menu.exec_(self.viewport().mapToGlobal(position))
 
 
@@ -201,8 +205,26 @@ class FolderItem(QStandardItem):
     def __init__(self, path: Path):
         super().__init__(path.name)
         self.path = path
+        self._paths = set()
         self.setIcon(Icon('folder'))
         self._updated: bool = False
+        self._timer = None
+
+    def turn_on_autoupdate(self):
+        if not self._timer:
+            self._timer = QTimer()
+            self._timer.timeout.connect(self._fast_fill)
+
+        self._timer.start(1000)
+        self.setBackground(QColor('red'))
+
+    def turn_off_autoupdate(self):
+        if self._timer:
+            self._timer.stop()
+        self.setBackground(QColor(0, 0, 0, 0))
+
+    def autoupdate_is_on(self):
+        return self._timer and self._timer.isActive()
 
     def on_clicked(self):
         if not self._updated:
@@ -212,13 +234,27 @@ class FolderItem(QStandardItem):
     def _fill(self):
         paths = sorted(list(self.path.glob('*')))
         for path in paths:
-            self.appendRow(_get_item_row(path))
+            self._paths.add(path)
+            self.insertRow(0, _get_item_row(path))
+
+    def _fast_fill(self):
+        paths = sorted(list(self.path.glob('*')))
+
+        if len(paths) < len(self._paths) or self._paths.difference(paths):
+            self.update()
+            return
+
+        for path in paths:
+            if path not in self._paths:
+                self._paths.add(path)
+                self.insertRow(0, _get_item_row(path))
 
     def update(self):
         self.clear()
         self._fill()
 
     def clear(self):
+        self._paths.clear()
         self.removeRows(0, self.rowCount())
 
 
