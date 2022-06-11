@@ -72,6 +72,8 @@ class FileViewWidget(QWidget):
         self.model = QFileSystemModel()
         self.tree.setModel(self.model)
         self.tree.setRootIndex(self.model.setRootPath(self.base_path))
+        self.tree.selectionModel().currentChanged.connect(self._on_clicked)
+        # TODO: write own model to be able to update efficiently
 
     def _init_ui(self):
         self.model = QFileSystemModel()
