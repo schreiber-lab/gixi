@@ -33,7 +33,7 @@ class GixiFileManager(object):
         if add_time:
             src_name = src_name + dt.strftime(dt.now(), '-%d_%b_%H-%M-%S')
         self.folder_path = self.parent_folder_path / src_name
-        self.log.info(f'Saving images to {str(self.folder_path)}')
+        self.log.info(f'Saving images to {str(self.folder_path)} ... ')
         self.folder_path.mkdir(exist_ok=True)
 
     def save(self, file_name: str, data_dict: dict, attrs: dict = None):
@@ -41,6 +41,8 @@ class GixiFileManager(object):
 
         with File(self.folder_path / file_name, 'w') as f:
             save_image_data(data_dict, f, attrs)
+
+        self.log.info(f'Saved {file_name}')
 
     @staticmethod
     def read(filepath: str or Path):
