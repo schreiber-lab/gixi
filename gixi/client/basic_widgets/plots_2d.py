@@ -31,7 +31,6 @@ class Viewer2D(GraphicsLayoutWidget):
         self.setWindowTitle('Image Viewer')
         self.image_plot = self.addPlot(**kwargs)
         self.image_plot.vb.setAspectLocked()
-        self.image_plot.vb.invertY()
         self.image_item = ImageItem()
         self.image_plot.addItem(self.image_item)
         self.image_plot.setMenuEnabled(False)
