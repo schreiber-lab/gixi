@@ -244,10 +244,10 @@ class FolderItem(QStandardItem):
             self._full_update()
             return
 
-        for path in paths:
-            if path not in self._paths:
-                self._paths.add(path)
-                self.insertRow(0, _get_item_row(path))
+        for path in sorted(list(set(paths).difference(self._paths))):
+            self.insertRow(0, _get_item_row(path))
+
+        self._paths.update(paths)
 
     def _full_update(self):
         self.clear()
@@ -255,6 +255,11 @@ class FolderItem(QStandardItem):
 
     def update(self):
         self._fast_fill()
+
+    def __del__(self):
+        if self.autoupdate_is_on():
+            self._timer.stop()
+        super().__del__()
 
     def clear(self):
         self._paths.clear()
