@@ -228,7 +228,7 @@ class FolderItem(QStandardItem):
 
     def on_clicked(self):
         if not self._updated:
-            self.update()
+            self._fast_fill()
         self._updated = True
 
     def _fill(self):
@@ -254,12 +254,7 @@ class FolderItem(QStandardItem):
         self._fill()
 
     def update(self):
-        self._fast_fill()
-
-    def __del__(self):
-        if self.autoupdate_is_on():
-            self._timer.stop()
-        super().__del__()
+        self._full_update()  # if done manually, people might want all the folders to update.
 
     def clear(self):
         self._paths.clear()
