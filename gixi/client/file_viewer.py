@@ -17,6 +17,7 @@ from gixi.client.tools import get_folder_filepath
 
 class FileViewer(QMainWindow):
     sigImageFileClicked = pyqtSignal(str)
+    sigGixiFileClicked = pyqtSignal(str)
     sigH5FileClicked = pyqtSignal(str)
 
     def __init__(self, base_path: str, parent=None):
@@ -25,6 +26,7 @@ class FileViewer(QMainWindow):
         self.file_widget = FileViewWidget(base_path, parent)
         self.file_widget.sigImageFileClicked.connect(self.sigImageFileClicked)
         self.file_widget.sigH5FileClicked.connect(self.sigH5FileClicked)
+        self.file_widget.sigGixiFileClicked.connect(self.sigGixiFileClicked)
 
         self.setCentralWidget(self.file_widget)
         self.setWindowTitle('File View')
@@ -49,6 +51,7 @@ class FileViewWidget(QWidget):
     sigImageFileClicked = pyqtSignal(str)
     sigH5FileClicked = pyqtSignal(str)
     sigCifFileClicked = pyqtSignal(str)
+    sigGixiFileClicked = pyqtSignal(str)
 
     def __init__(self, base_path: str, parent=None):
         super().__init__(parent=parent)
@@ -100,9 +103,17 @@ class FileViewWidget(QWidget):
         path = self.model.filePath(index)
 
         if path and Path(path).is_file() and path.endswith('.tif'):
-            self.log.info(f'{path} clicked.')
+            self.log.debug(f'{path} clicked.')
             self.sigImageFileClicked.emit(path)
+            return
 
         if path and Path(path).is_file() and path.endswith('.cif'):
-            self.log.info(f'{path} clicked.')
+            self.log.debug(f'{path} clicked.')
             self.sigCifFileClicked.emit(path)
+            return
+
+        if path and Path(path).is_file() and path.endswith('.gixi'):
+            self.log.debug(f'{path} clicked.')
+            self.sigGixiFileClicked.emit(path)
+            return
+

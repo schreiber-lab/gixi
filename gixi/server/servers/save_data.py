@@ -3,7 +3,7 @@ from pathlib import Path
 
 from gixi.server.time_record import TimeRecorder
 
-from ..h5utils import H5FileManager
+from ..h5utils import GixiFileManager
 from ..app_config import AppConfig, SaveConfig
 
 
@@ -14,8 +14,8 @@ class SaveData(object):
         self.save_config = config.save_config
         self._keys = _init_save_keys(self.save_config)
         self.src_path = config.src_path
-        self.h5file = H5FileManager(config.dest_path)
-        self.group_name = self.h5file.init_folder(self.src_path.name)
+        self.h5file = GixiFileManager(config.dest_path)
+        self.h5file.init_folder(self.src_path.name, add_time=not config.job_config.rewrite_previous)
 
     def __call__(self, data_dicts: List[dict]):
         for data_dict in data_dicts:
@@ -32,7 +32,7 @@ class SaveData(object):
             with self.time_recorder():
                 file_name = _get_path_name(paths[0], self.src_path)
                 data_dict = {k: data_dict[k] for k in self._keys}
-                self.h5file.save(self.group_name, file_name, data_dict, attrs=dict(paths=path_names))
+                self.h5file.save(file_name, data_dict, attrs=dict(paths=path_names))
 
 
 def _get_path_name(path: Path, rel_folder: Path) -> str:

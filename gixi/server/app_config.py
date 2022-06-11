@@ -206,8 +206,9 @@ class JobConfig(Config):
     config_path: str = ''
     folder_name: str = ''
     data_dir: str = ''
-    dest_name: str = ''
     name: str = 'gixi'
+    rewrite_previous: bool = True
+    dest_name: str = ''  # redundant parameter for back-compatibility
 
     CONF_NAME = 'Data Paths'
 
@@ -215,8 +216,8 @@ class JobConfig(Config):
         config_path='Configuration file name',
         folder_name='Raw data folder name (relative to data_dir/raw/)',
         data_dir='Path to the root directory of the measurements (data_dir)',
-        dest_name='H5 file name for storing the results (stored to data_dir/processed/)',
         name='Name of the job',
+        rewrite_previous='Rewrite previous results for this folder'
     )
 
     @property
@@ -280,7 +281,6 @@ class AppConfig(Config):
         path = Path(jc.data_dir).expanduser()
         if not self.program_paths_config.local_env:
             path = path / 'processed'
-        path = path / jc.dest_name
         return path
 
     @property

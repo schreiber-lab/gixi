@@ -2,8 +2,10 @@ import logging
 from typing import Dict
 from pathlib import Path
 from enum import Enum
+from datetime import datetime as dt
 
 import h5py
+from h5py import File
 import numpy as np
 
 
@@ -17,6 +19,39 @@ class H5Items(Enum):
 
 
 IMAGE_DATASET_ATTR: str = 'IMAGE_DATASET'
+
+
+class GixiFileManager(object):
+    def __init__(self, folder_path: str or Path):
+        self.log = logging.getLogger(__name__)
+        self.parent_folder_path = folder_path
+        assert self.parent_folder_path.is_dir()
+        self.folder_path = None
+
+    def init_folder(self, src_name: str, add_time: bool = True):
+        src_name = src_name.split('.')[0]
+        if add_time:
+            src_name = src_name + dt.strftime(dt.now(), '-%d_%b_%H-%M-%S')
+        self.folder_path = self.parent_folder_path / src_name
+        self.log.info(f'Saving images to {str(self.folder_path)}')
+        self.folder_path.mkdir(exist_ok=True)
+
+    def save(self, file_name: str, data_dict: dict, attrs: dict = None):
+        file_name = Path(file_name).name.split('.')[0] + '.gixi'
+
+        with File(self.folder_path / file_name, 'w') as f:
+            save_image_data(data_dict, f, attrs)
+
+    @staticmethod
+    def read(filepath: str or Path):
+        return read_gixi(filepath)
+
+
+def read_gixi(filepath: str or Path) -> dict:
+    with File(filepath, 'r') as f:
+        data_dict = {k: f[k][()] for k in f.keys()}
+        data_dict['attrs'] = dict(f.attrs)
+        return data_dict
 
 
 class H5FileManager(object):

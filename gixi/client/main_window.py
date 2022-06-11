@@ -56,7 +56,7 @@ class MainWidget(DockArea):
         self.log_holder = QtLogWidgetHolder(self)
         self.server_log = ServerLogWidget(parent=self)
         self.image_tab = ImageTab(self)
-        self.radial_profiles = RadialProfilesWidget(self)
+        # self.radial_profiles = RadialProfilesWidget(self)
         self.submit_job_window = ConfigWidget(self.data_controller.current_config, self)
         self.docks = {}
 
@@ -68,8 +68,8 @@ class MainWidget(DockArea):
         self._add_dock(self.log_holder.widget, 'Client Logs', position='bottom', size=(10, 100))
         self._add_dock(self.server_log, 'Server Logs', position='right', relativeTo=self.docks['Client Logs'])
         self._add_dock(self.image_tab, 'ImageTab', position='right', size=(500, 500))
-        self._add_dock(self.radial_profiles, 'RadialProfiles', position='right', size=(500, 500))
-        self._hide_dock_callable('RadialProfiles')()
+        # self._add_dock(self.radial_profiles, 'RadialProfiles', position='right', size=(500, 500))
+        # self._hide_dock_callable('RadialProfiles')()
 
     def _add_dock(self, widget, name, size: tuple = (200, 200), position: str = 'right', relativeTo=None):
         dock = Dock(name)
@@ -91,19 +91,20 @@ class MainWidget(DockArea):
 
     def _connect(self):
         self.file_tab.file_viewer.sigImageFileClicked.connect(self.data_controller.set_image)
+        self.file_tab.file_viewer.sigGixiFileClicked.connect(self.data_controller.read_gixi)
         self.file_tab.h5_viewer.sigImageDatasetClicked.connect(self.data_controller.set_data)
         self.file_tab.h5_viewer.sigDatasetClicked.connect(self.data_controller.set_dataset)
         self.file_tab.file_viewer.sigH5FileClicked.connect(self.file_tab.switch_to_h5)
         self.file_tab.file_viewer.sigH5FileClicked.connect(self.file_tab.h5_viewer.set_h5_path)
-        self.file_tab.cif_viewer.sigCifFileClicked.connect(self.data_controller.set_cif)
+        # self.file_tab.cif_viewer.sigCifFileClicked.connect(self.data_controller.set_cif)
         self.data_controller.sigImageUpdated.connect(self.image_tab.set_image)
-        self.data_controller.sigImageUpdated.connect(self.radial_profiles.clear_data)
         self.data_controller.sigDataUpdated.connect(self.image_tab.set_data)
-        self.data_controller.sigDataUpdated.connect(self._show_dock_callable('RadialProfiles'))
-        self.data_controller.sigImageUpdated.connect(self._hide_dock_callable('RadialProfiles'))
-        self.data_controller.sigDataUpdated.connect(self.radial_profiles.set_data)
-        self.data_controller.sigCifProfileUpdated.connect(self.radial_profiles.set_cif_profile)
-        self.data_controller.sigCifProfileUpdated.connect(self._show_dock_callable('RadialProfiles'))
+        # self.data_controller.sigImageUpdated.connect(self.radial_profiles.clear_data)
+        # self.data_controller.sigDataUpdated.connect(self._show_dock_callable('RadialProfiles'))
+        # self.data_controller.sigImageUpdated.connect(self._hide_dock_callable('RadialProfiles'))
+        # self.data_controller.sigDataUpdated.connect(self.radial_profiles.set_data)
+        # self.data_controller.sigCifProfileUpdated.connect(self.radial_profiles.set_cif_profile)
+        # self.data_controller.sigCifProfileUpdated.connect(self._show_dock_callable('RadialProfiles'))
         self.submit_job_window.sigSubmitJobClicked.connect(self.data_controller.submit_job)
         self.submit_job_window.sigCurrentConfigUpdated.connect(self.server_log.set_config)
 

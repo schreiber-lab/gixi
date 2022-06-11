@@ -4,7 +4,7 @@ from PyQt5.QtCore import pyqtSlot
 
 from gixi.client.file_viewer import FileViewer
 from gixi.client.h5file_viewer import H5Viewer
-from gixi.client.cif_viewer import CifViewer
+# from gixi.client.cif_viewer import CifViewer
 
 
 class FileTab(QTabWidget):
@@ -13,10 +13,10 @@ class FileTab(QTabWidget):
         super().__init__(parent)
         self.file_viewer = FileViewer(path, self)
         self.h5_viewer = H5Viewer(parent=self)
-        self.cif_viewer = CifViewer('', parent=self)
+        # self.cif_viewer = CifViewer('', parent=self)
         self.addTab(self.file_viewer, 'File Viewer')
         self.addTab(self.h5_viewer, 'H5 Viewer')
-        self.addTab(self.cif_viewer, 'Cif Viewer')
+        # self.addTab(self.cif_viewer, 'Cif Viewer')
 
     @pyqtSlot()
     def switch_to_h5(self):

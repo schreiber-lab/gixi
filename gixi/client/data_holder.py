@@ -13,6 +13,7 @@ from PIL import Image
 
 from gixi.server.img_processing import ContrastCorrection
 from gixi.server.app_config import AppConfig
+from gixi.server.h5utils import read_gixi
 
 from gixi.client.submit_job import submit_job
 from gixi.client.tools import show_error
@@ -44,6 +45,15 @@ class DataHolder(QObject):
     @property
     def q(self):
         return np.linspace(0, self.q_max, self._q_num)
+
+    @pyqtSlot(str)
+    def read_gixi(self, filename: str):
+        try:
+            data = read_gixi(filename)
+        except Exception as err:
+            self.log.exception(err)
+            return
+        self.set_data(data)
 
     @pyqtSlot(AppConfig)
     def submit_job(self, config: AppConfig):
