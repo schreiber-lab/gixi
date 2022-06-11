@@ -9,7 +9,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout
 )
 from PyQt5.QtCore import (
-    pyqtSignal
+    pyqtSignal,
+    pyqtSlot,
 )
 
 from gixi.client.tools import get_folder_filepath
@@ -66,8 +67,10 @@ class FileViewWidget(QWidget):
         self.base_path = base_path
         self.update_files()
 
+    @pyqtSlot()
     def update_files(self):
-        self.tree.setRootIndex(self.model.setRootPath(''))
+        self.model = QFileSystemModel()
+        self.tree.setModel(self.model)
         self.tree.setRootIndex(self.model.setRootPath(self.base_path))
 
     def _init_ui(self):
@@ -116,4 +119,3 @@ class FileViewWidget(QWidget):
             self.log.debug(f'{path} clicked.')
             self.sigGixiFileClicked.emit(path)
             return
-
