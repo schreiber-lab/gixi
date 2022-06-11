@@ -106,7 +106,7 @@ class FastServerResources(SharedResources):
     def get_time_recorder(self):
         record = TimeRecorder('total')
         while not self.time_records.empty():
-            record.add_records(self.time_records.get())
+            record += TimeRecorder(**self.time_records.get())
         return record
 
 
@@ -120,7 +120,7 @@ class FastServer(Workers):
         self.time_recorder = TimeRecorder(self.method_name, no_record=not config.log_config.record_time)
 
     def on_stop(self, **kwargs):
-        self.resources.time_records.put(self.time_recorder.records.copy())
+        self.resources.time_records.put(self.time_recorder.asdict())
 
     def collect_paths(self, **kwargs):
         config = AppConfig.from_dict(kwargs['config'])
@@ -176,7 +176,6 @@ class FastServer(Workers):
                 self.time_recorder.end_record()
             except (OSError, ValueError, Empty):
                 self.time_recorder.end_record('timeout')
-                # self.log.debug(f'results_queue empty, continue.')
                 continue
             try:
                 save_data(data_list)
@@ -211,10 +210,6 @@ class FastModelPrediction(object):
                     break
             if not data_list:
                 self.log.debug(f'Data list is empty, continue waiting for new data.')
-                self.log.debug(f'is_stopped={self.resources.is_stopped}\n'
-                               f'num_found_images={self.resources.num_found_images}\n'
-                               f'num_saved_images={self.resources.num_saved_images}\n'
-                               f'results_queue empty: {self.resources.results_queue.empty()}')
                 continue
             try:
                 with self.time_recorder('detect'):

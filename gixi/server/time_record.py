@@ -21,15 +21,19 @@ def _ignore_if_no_record(func):
 
 
 class TimeRecorder(object):
-    def __init__(self, name: str, no_record: bool = False, records: dict = None):
+    def __init__(self, name: str, no_record: bool = False, records: dict = None, start_times: dict = None):
         self.name = name
         self.no_record = no_record
         self.records = defaultdict(list)
+        self.start_times = defaultdict(list)
         self._start_time = None
         self._record_name = ''
 
         if records:
             self.records.update(records)
+
+        if start_times:
+            self.start_times.update(start_times)
 
     def iterate(self, iterator, name: str = ''):
         if self.no_record:
@@ -62,7 +66,10 @@ class TimeRecorder(object):
         except TypeError:
             raise TypeError(f'Have to call start_record before calling end_record.')
 
-        self.records[self._get_record_name(name)].append(record)
+        name = self._get_record_name(name)
+
+        self.records[name].append(record)
+        self.start_times[name].append(self._start_time)
         self.clear_record()
 
     def _get_record_name(self, end_name: str = ''):
@@ -83,14 +90,12 @@ class TimeRecorder(object):
         self.records.clear()
         self.clear_record()
 
-    def add_records(self, records: dict):
-        _add_records(self.records, records)
-
     def __iadd__(self, other: 'TimeRecorder'):
         if not isinstance(other, TimeRecorder):
             return NotImplemented
 
         _add_records(self.records, other.records)
+        _add_records(self.start_times, other.start_times)
 
         return self
 
@@ -98,11 +103,17 @@ class TimeRecorder(object):
         if not isinstance(other, TimeRecorder):
             return NotImplemented
         records = _add_records(self.records.copy(), other.records)
+        start_times = _add_records(self.start_times.copy(), other.start_times)
 
-        return TimeRecorder(self.name, self.no_record, records=dict(records))
+        return TimeRecorder(self.name, self.no_record, records=dict(records), start_times=dict(start_times))
 
     def asdict(self):
-        return dict(name=self.name, no_record=self.no_record, records=dict(self.records))
+        return dict(
+            name=self.name,
+            no_record=self.no_record,
+            records=dict(self.records),
+            start_times=dict(self.start_times)
+        )
 
     def save(self, path: str or Path):
         save(self.asdict(), path)
