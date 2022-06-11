@@ -113,7 +113,7 @@ class PolarConversionConfig(Config):
 
 
 class LogConfig(Config):
-    record_time: bool = False
+    record_time: bool = True
     debug: bool = False
     log_to_file: bool = True
     record_filename: str = 'time_records.pt'  # redundant attr for back-compatibility TODO: remove
