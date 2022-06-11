@@ -6,9 +6,11 @@ from gixi.server.config import Config
 
 PROGRAM_PATH = Path(__file__).parents[2].absolute()
 SERVER_LOGS_PATH = PROGRAM_PATH / 'server_logs'
+TIME_RECORDS_PATH: Path = PROGRAM_PATH / 'time_records'
 
-# Yes, it does create a folder on import.
+# Yes, it does create folders on import.
 SERVER_LOGS_PATH.mkdir(exist_ok=True)
+TIME_RECORDS_PATH.mkdir(exist_ok=True)
 
 
 class ContrastConfig(Config):
@@ -112,9 +114,9 @@ class PolarConversionConfig(Config):
 
 class LogConfig(Config):
     record_time: bool = False
-    record_filename: str = 'time_records.pt'
     debug: bool = False
     log_to_file: bool = True
+    record_filename: str = 'time_records.pt'  # redundant attr for back-compatibility TODO: remove
 
     CONF_NAME = 'Logging Parameters'
 
@@ -208,7 +210,7 @@ class JobConfig(Config):
     data_dir: str = ''
     name: str = 'gixi'
     rewrite_previous: bool = True
-    dest_name: str = ''  # redundant parameter for back-compatibility
+    dest_name: str = ''  # redundant parameter for back-compatibility TODO: remove
 
     CONF_NAME = 'Data Paths'
 
@@ -292,3 +294,9 @@ class AppConfig(Config):
         if self.log_config.log_to_file:
             filename = self.job_config.id_name + '.log'
             return str(SERVER_LOGS_PATH / filename)
+
+    @property
+    def record_filename(self) -> str or None:
+        if self.log_config.record_time:
+            filename = f'record_time_{self.job_config.id_name}.pt'
+            return str(TIME_RECORDS_PATH / filename)
