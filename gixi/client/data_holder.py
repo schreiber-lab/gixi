@@ -62,13 +62,13 @@ class DataHolder(QObject):
         if not config.general.real_time and not data_folder.is_dir() and not data_folder.is_symlink():
             show_error(f'Data folder {str(data_folder)} does not exist.', error_title='Directory not found.')
             return
-        folder = init_folder(config.dest_path, config.src_path.name, add_time=not config.job_config.rewrite_previous)
+        # folder = init_folder(config.dest_path, config.src_path.name, add_time=not config.job_config.rewrite_previous)
         out, err = submit_job(config)
         self.log.info(f'Job submitted: {out}. Config: {config}.')
         if err:
             self.log.error(f'Error submitting job: {err}')
-        else:
-            self.sigWatchFolder.emit(folder)
+        # else:
+        #     self.sigWatchFolder.emit(folder)
 
     @pyqtSlot(str)
     def set_image(self, path: str):
