@@ -102,9 +102,8 @@ class ConfigWidget(QWidget):
     def _on_submit_clicked(self):
         config = self._save_config()
         self.logger.info('Submit job')
+        self._update_current_config()
         self.sigSubmitJobClicked.emit(config)
-
-        self._ask_before_close()
         self.hide()
 
     @pyqtSlot()
