@@ -13,7 +13,7 @@ from PIL import Image
 
 from gixi.server.img_processing import ContrastCorrection
 from gixi.server.app_config import AppConfig
-from gixi.server.h5utils import read_gixi
+from gixi.server.h5utils import read_gixi, init_folder
 
 from gixi.client.submit_job import submit_job
 from gixi.client.tools import show_error
@@ -24,6 +24,7 @@ class DataHolder(QObject):
     sigImageUpdated = pyqtSignal(object)
     sigDataUpdated = pyqtSignal(dict)
     sigCifProfileUpdated = pyqtSignal(dict)
+    sigWatchFolder = pyqtSignal(Path)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -61,10 +62,13 @@ class DataHolder(QObject):
         if not config.general.real_time and not data_folder.is_dir() and not data_folder.is_symlink():
             show_error(f'Data folder {str(data_folder)} does not exist.', error_title='Directory not found.')
             return
+        folder = init_folder(config.dest_path, config.src_path.name, add_time=not config.job_config.rewrite_previous)
         out, err = submit_job(config)
         self.log.info(f'Job submitted: {out}. Config: {config}.')
         if err:
             self.log.error(f'Error submitting job: {err}')
+        else:
+            self.sigWatchFolder.emit(folder)
 
     @pyqtSlot(str)
     def set_image(self, path: str):

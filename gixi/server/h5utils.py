@@ -29,12 +29,8 @@ class GixiFileManager(object):
         self.folder_path = None
 
     def init_folder(self, src_name: str, add_time: bool = True):
-        src_name = src_name.split('.')[0]
-        if add_time:
-            src_name = src_name + dt.strftime(dt.now(), '-%d_%b_%H-%M-%S')
-        self.folder_path = self.parent_folder_path / src_name
+        self.folder_path = init_folder(self.parent_folder_path, src_name, add_time)
         self.log.info(f'Saving images to {str(self.folder_path)} ... ')
-        self.folder_path.mkdir(exist_ok=True)
 
     def save(self, file_name: str, data_dict: dict, attrs: dict = None):
         file_name = Path(file_name).name.split('.')[0] + '.gixi'
@@ -47,6 +43,15 @@ class GixiFileManager(object):
     @staticmethod
     def read(filepath: str or Path):
         return read_gixi(filepath)
+
+
+def init_folder(parent_folder_path: Path, src_name: str, add_time: bool = True) -> Path:
+    src_name = src_name.split('.')[0]
+    if add_time:
+        src_name = src_name + dt.strftime(dt.now(), '-%d_%b_%H-%M-%S')
+    folder_path = parent_folder_path / src_name
+    folder_path.mkdir(exist_ok=True)
+    return folder_path
 
 
 def read_gixi(filepath: str or Path) -> dict:

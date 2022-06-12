@@ -45,6 +45,10 @@ class FileViewer(QMainWindow):
 
         self._init_toolbars()
 
+    @pyqtSlot(Path)
+    def watch_folder(self, path: Path):
+        self.file_widget.watch_folder(path)
+
     def change_base_path(self):
         path = get_folder_filepath(self, 'Choose a directory')
         if path:
@@ -97,6 +101,9 @@ class FileTree(QTreeView):
     def set_base_path(self, path):
         path = Path(path)
         self._model.update_root(path)
+
+    def watch_folder(self, path: Path):
+        self._model.watch_folder(path)
 
     @pyqtSlot(QStandardItem)
     def _select_item(self, item: QStandardItem):
@@ -164,9 +171,21 @@ class FileModel(QStandardItemModel):
 
     def __init__(self, root_path: Path = None):
         super().__init__()
+        self.log = logging.getLogger(__name__)
         self.setHorizontalHeaderLabels(['Name', 'Type', 'Size', 'Date Modified'])
         self.base_path = root_path or Path.home()
         self.update_root(self.base_path)
+
+    @pyqtSlot(Path)
+    def watch_folder(self, path: Path):
+        if not path.is_dir():
+            self.log.warning(f'{str(path)} is not a directory')
+            return
+        self.update_root(root_path=path)
+        watch_folder: FolderItem = self.item(0, 0)
+
+        if isinstance(watch_folder, FolderItem):
+            watch_folder.turn_on_autoupdate()
 
     def update_root(self, root_path: Path):
         self.base_path = root_path

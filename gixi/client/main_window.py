@@ -99,6 +99,7 @@ class MainWidget(DockArea):
         # self.file_tab.cif_viewer.sigCifFileClicked.connect(self.data_controller.set_cif)
         self.data_controller.sigImageUpdated.connect(self.image_tab.set_image)
         self.data_controller.sigDataUpdated.connect(self.image_tab.set_data)
+        self.data_controller.sigWatchFolder.connect(self.file_tab.file_viewer.watch_folder)
         # self.data_controller.sigImageUpdated.connect(self.radial_profiles.clear_data)
         # self.data_controller.sigDataUpdated.connect(self._show_dock_callable('RadialProfiles'))
         # self.data_controller.sigImageUpdated.connect(self._hide_dock_callable('RadialProfiles'))
