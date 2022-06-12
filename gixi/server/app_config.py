@@ -117,6 +117,7 @@ class LogConfig(Config):
     debug: bool = False
     log_to_file: bool = True
     record_filename: str = 'time_records.pt'  # redundant attr for back-compatibility TODO: remove
+    log_level: str = 'INFO'  # redundant attr for back-compatibility TODO: remove
 
     CONF_NAME = 'Logging Parameters'
 
@@ -126,7 +127,7 @@ class LogConfig(Config):
     )
 
     @property
-    def log_level(self) -> int:
+    def logging_level(self) -> int:
         level = 'DEBUG' if self.debug else 'INFO'
         return logging.getLevelName(level)
 

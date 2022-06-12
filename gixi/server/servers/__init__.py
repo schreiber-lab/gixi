@@ -9,7 +9,7 @@ from .basicserver import BasicServer
 
 
 def run_server(app_config: AppConfig):
-    set_log_config(app_config.log_config.log_level, app_config.log_filename)
+    set_log_config(app_config.log_config.logging_level, app_config.log_filename)
     logging.getLogger(__name__).info(f'Starting server from config: {app_config.job_config.config_path}.')
 
     if app_config.parallel.parallel_computation:

@@ -41,7 +41,7 @@ class MultiProcessServer(BasicServer):
                 FastServer,
                 self.resources,
                 self.methods,
-                log_level=self.config.log_config.log_level,
+                log_level=self.config.log_config.logging_level,
                 config=self.config.asdict(),
         ):
             self.model.run()
