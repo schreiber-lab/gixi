@@ -58,7 +58,7 @@ class DataHolder(QObject):
     @pyqtSlot(AppConfig)
     def submit_job(self, config: AppConfig):
         data_folder = Path(config.job_config.data_dir).expanduser() / 'raw' / config.job_config.folder_name
-        if not data_folder.is_dir() and not data_folder.is_symlink():
+        if not config.general.real_time and not data_folder.is_dir() and not data_folder.is_symlink():
             show_error(f'Data folder {str(data_folder)} does not exist.', error_title='Directory not found.')
             return
         out, err = submit_job(config)
