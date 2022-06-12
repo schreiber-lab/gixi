@@ -1,5 +1,6 @@
 cluster_config:
   chdir: ~/maxwell_output/
+  max_cores: -1
   nodes: 1
   partition: psx
   reservation: ''
@@ -18,9 +19,15 @@ general:
 job_config:
   config_path: test_config.yaml
   data_dir: ~/local_scripts/gixi/tests/data
-  dest_name: test_data.h5
+  dest_name: ''
   folder_name: dset1
   name: gixi_test
+  rewrite_previous: true
+log_config:
+  debug: false
+  log_to_file: true
+  record_filename: time_records.pt
+  record_time: true
 model_config:
   name: save_only_largest_2
 parallel:
