@@ -40,7 +40,12 @@ class FeatureDetector(object):
 
     @torch.no_grad()
     def __call__(self, data_list: List[dict]) -> List[dict]:
-        polar_images = torch.tensor(np.array([data['polar_img'] for data in data_list]), device=self.device)[:, None]
+        polar_images = torch.tensor(
+            [data['processed_img'] for data in data_list],
+            dtype=torch.float32,
+            device=self.device
+        )[:, None]
+
         boxes_list, scores_list = self.model(polar_images)
 
         for i in range(len(boxes_list)):
