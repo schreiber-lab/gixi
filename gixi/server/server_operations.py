@@ -65,6 +65,10 @@ class ProcessImages(object):
         self.q_interp = QInterpolation(config)
         self.p_interp = PolarInterpolation(config)
 
+        self._save_img = config.save_config.save_img
+        self._save_q_img = config.save_config.save_q_img
+        self._save_polar_img = config.save_config.save_polar_img
+
     def polar_interpolation(self, img: np.ndarray):
         with self.time_recorder('polar'):
             return self.p_interp(img)
@@ -83,11 +87,21 @@ class ProcessImages(object):
             if img.shape != self.q_interp.expected_shape:
                 return
 
-            img = self.contrast(img)
-            q_img = self.q_interpolation(img)
+            res_dict: Dict[str, np.ndarray] = {}
+
+            if self._save_img:
+                res_dict['img'] = img
+            if self._save_q_img:
+                res_dict['q_img'] = self.q_interpolation(img)
+
             polar_img = self.polar_interpolation(img)
 
-            return {'img': q_img, 'polar_img': polar_img, 'paths': img_paths}
+            if self._save_polar_img:
+                res_dict['polar_img'] = polar_img
+
+            res_dict['processed_img'] = self.contrast(polar_img)
+
+            return res_dict
         except Exception as err:
             self.log.exception(err)
             return
