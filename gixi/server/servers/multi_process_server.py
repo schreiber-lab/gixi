@@ -65,9 +65,6 @@ class FastServerResources(SharedResources):
 
         self.max_batch = config.parallel.max_batch
 
-        self._record_file_path = config.log_config.record_filename
-        self._record_time = config.log_config.record_time
-
         self.paths_queue = manager.Queue()
         self.stats_queue = manager.Queue()
         self.images_queue = manager.Queue(self.max_batch)
