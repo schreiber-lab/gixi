@@ -115,9 +115,7 @@ class PolarConversionConfig(Config):
 class LogConfig(Config):
     record_time: bool = True
     debug: bool = False
-    log_to_file: bool = True
-    record_filename: str = 'time_records.pt'  # redundant attr for back-compatibility TODO: remove
-    log_level: str = 'INFO'  # redundant attr for back-compatibility TODO: remove
+    log_to_file: bool = False
 
     CONF_NAME = 'Logging Parameters'
 
@@ -175,15 +173,17 @@ class ClusterConfig(Config):
 
 
 class SaveConfig(Config):
-    save_img: bool = True
-    save_polar_img: bool = True
+    save_img: bool = False
+    save_q_img: bool = False
+    save_polar_img: bool = False
     save_scores: bool = True
 
     CONF_NAME = 'Save Configuration'
 
     PARAM_DESCRIPTIONS = dict(
-        save_img='Save processed images in q space',
-        save_polar_img='Save processed images in polar space',
+        save_img='Save raw images',
+        save_q_img='Save images in reciprocal space',
+        save_polar_img='Save images in polar space',
     )
 
 
@@ -211,7 +211,6 @@ class JobConfig(Config):
     data_dir: str = ''
     name: str = 'gixi'
     rewrite_previous: bool = True
-    dest_name: str = ''  # redundant parameter for back-compatibility TODO: remove
 
     CONF_NAME = 'Data Paths'
 
