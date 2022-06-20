@@ -1,7 +1,7 @@
 from scipy.optimize import linear_sum_assignment
 import numpy as np
 
-from gixi.server.matching.simulate_diffraction_peaks import get_diffraction_peaks
+from gixi.server.matching.simulate_diffraction_peaks import simulate_diffraction_peaks
 from gixi.server.app_config import AppConfig
 
 
@@ -42,14 +42,17 @@ class MatchDiffractionPatterns(object):
 
     def _simulate_peaks(self):
         sim_results = []
+
         for path in self.folder.glob('*.cif'):
             name = path.stem
-            q_pos, intensities, miller_indices = get_diffraction_peaks(
+            q_pos, intensities, miller_indices = simulate_diffraction_peaks(
                 path,
                 q_max=self.q_max,
                 wavelength=self.config.q_space.wavelength,
             )
-            sim_results.append((name, path, q_pos, intensities, miller_indices))
+
+            if intensities.sum() > 0:
+                sim_results.append((name, path, q_pos, intensities, miller_indices))
 
         return sim_results
 

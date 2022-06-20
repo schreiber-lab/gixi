@@ -13,10 +13,10 @@ from numpy import cos as ncos
 from numpy import sin as nsin
 
 
-def get_diffraction_peaks(
+def simulate_diffraction_peaks(
         mat: Union[Crystal, str, Path],
-        q_max: float = 4.,
-        wavelength: float = 0.6888,
+        q_max: float,
+        wavelength: float,
         normalize: bool = True,
 ):
     if not isinstance(mat, Crystal):
