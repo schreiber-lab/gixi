@@ -12,7 +12,7 @@ from .model import (
 from gixi.server.app_config import AppConfig
 
 
-def get_basic_model_1(config: AppConfig):
+def get_basic_model(config: AppConfig):
     device = config.device
     model_name = config.model_config.name
 

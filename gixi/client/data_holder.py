@@ -17,7 +17,7 @@ from gixi.server.h5utils import read_gixi, init_folder
 
 from gixi.client.submit_job import submit_job
 from gixi.client.tools import show_error
-from gixi.client.read_cifs import get_powder_profile
+# from gixi.client.read_cifs import get_powder_profile
 
 
 class DataHolder(QObject):
@@ -96,18 +96,18 @@ class DataHolder(QObject):
         except KeyError:
             return
 
-    @pyqtSlot(str)
-    def set_cif(self, path: str):
-        try:
-            q_profile = get_powder_profile(self.q, path)
-            cif_data = {
-                'q': self.q,
-                'profile': q_profile,
-                'name': Path(path).stem
-            }
-            self.sigCifProfileUpdated.emit(cif_data)
-        except Exception as err:
-            self.log.exception(err)
+    # @pyqtSlot(str)
+    # def set_cif(self, path: str):
+    #     try:
+    #         q_profile = get_powder_profile(self.q, path)
+    #         cif_data = {
+    #             'q': self.q,
+    #             'profile': q_profile,
+    #             'name': Path(path).stem
+    #         }
+    #         self.sigCifProfileUpdated.emit(cif_data)
+    #     except Exception as err:
+    #         self.log.exception(err)
 
     @pyqtSlot(object)
     def set_dataset(self, dset: np.ndarray):

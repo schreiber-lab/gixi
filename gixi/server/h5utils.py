@@ -56,9 +56,15 @@ def init_folder(parent_folder_path: Path, src_name: str, add_time: bool = True) 
 
 def read_gixi(filepath: str or Path) -> dict:
     with File(filepath, 'r') as f:
-        data_dict = {k: f[k][()] for k in f.keys()}
-        data_dict['attrs'] = dict(f.attrs)
-        return data_dict
+        return _parse_h5_item(f)
+
+
+def _parse_h5_item(group):
+    if isinstance(group, h5py.Dataset):
+        return group[()]
+    data_dict = {k: _parse_h5_item(v) for k, v in group.items()}
+    data_dict['attrs'] = dict(group.attrs)
+    return data_dict
 
 
 def save_image_data(data: dict, group: h5py.Group, attrs: dict = None):
@@ -68,6 +74,11 @@ def save_image_data(data: dict, group: h5py.Group, attrs: dict = None):
     save_data_to_h5(data, group)
 
 
-def save_data_to_h5(data: Dict[str, np.ndarray], group: h5py.Group):
+def save_data_to_h5(data: dict, group: h5py.Group):
     for k, v in data.items():
-        group.create_dataset(k, data=v, dtype=v.dtype)
+        if isinstance(v, dict):
+            save_data_to_h5(v, group.create_group(k))
+        elif isinstance(v, np.ndarray):
+            group.create_dataset(k, data=v, dtype=v.dtype)
+        else:
+            group.attrs[k] = v

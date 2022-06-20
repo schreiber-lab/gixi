@@ -1,11 +1,14 @@
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
 from torch import Tensor
 
 __all__ = [
     'to_np',
     'tensor_size',
-    'get_size_str'
+    'get_size_str',
+    'read_image',
 ]
 
 
@@ -36,3 +39,8 @@ def listdir(path: Path, match: str = '*'):
 
     for name, size in paths:
         print(name, get_size_str(size))
+
+
+def read_image(path: Path) -> np.ndarray:
+    # TODO: use fabio for other formats
+    return np.array(Image.open(path))

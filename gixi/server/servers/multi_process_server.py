@@ -209,7 +209,7 @@ class FastModelPrediction(object):
                 self.log.debug(f'Data list is empty, continue waiting for new data.')
                 continue
             try:
-                with self.time_recorder('detect'):
+                with self.time_recorder('detect_total'):
                     data_list = self.detector(data_list)
                 self.resources.results_queue.put(data_list)
             except Exception as err:
@@ -218,4 +218,5 @@ class FastModelPrediction(object):
 
             self.log.debug(f'Added num_predicted_images: {len(data_list)}')
 
+        self.time_recorder += self.detector.time_recorder
         self.log.info('Detection process is finished.')

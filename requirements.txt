@@ -8,6 +8,5 @@ tqdm
 PyYAML
 scikit-image
 opencv-python==4.1.2.30
-periodictable
-crystals
+xrayutilities
 h5py

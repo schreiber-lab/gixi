@@ -12,10 +12,23 @@ def _get_log_config(level, filename: str = None) -> dict:
     else:
         fmt = 'standard'
 
-    if filename:
-        handlers = ['file', 'console']
-    else:
-        handlers = ['console']
+    handlers = {
+        'console': {
+            'formatter': fmt,
+            'level': level,
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'formatter': fmt,
+            'level': level,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': filename,
+            'mode': 'w',
+        },
+    }
+
+    if not filename:
+        handlers.pop('file')
 
     return {
         'version': 1,
@@ -31,28 +44,15 @@ def _get_log_config(level, filename: str = None) -> dict:
                 'datefmt': "%H:%M:%S",
             },
         },
-        'handlers': {
-            'console': {
-                'formatter': fmt,
-                'level': level,
-                'class': 'logging.StreamHandler',
-            },
-            'file': {
-                'formatter': fmt,
-                'level': level,
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': filename,
-                'mode': 'w',
-            },
-        },
+        'handlers': handlers,
         'loggers': {
             '': {
-                'handlers': handlers,
+                'handlers': list(handlers.keys()),
                 'level': level,
                 'propagate': False,
             },
             '__main__': {
-                'handlers': handlers,
+                'handlers': list(handlers.keys()),
                 'level': level,
                 'propagate': False,
             },
@@ -61,5 +61,6 @@ def _get_log_config(level, filename: str = None) -> dict:
 
 
 def set_log_config(level: int = logging.INFO, filename: str = None):
-    logging.config.dictConfig(_get_log_config(level, filename=filename))
+    log_config = _get_log_config(level, filename=filename)
+    logging.config.dictConfig(log_config)
     logging.getLogger(__name__).debug(f'log config is set with level={level} and filename={filename}.')

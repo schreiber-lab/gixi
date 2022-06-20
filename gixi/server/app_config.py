@@ -2,15 +2,19 @@ import logging
 from pathlib import Path
 from collections import OrderedDict
 
+import numpy as np
+
 from gixi.server.config import Config
 
 PROGRAM_PATH = Path(__file__).parents[2].absolute()
 SERVER_LOGS_PATH = PROGRAM_PATH / 'server_logs'
 TIME_RECORDS_PATH: Path = PROGRAM_PATH / 'time_records'
+CIF_PATH: Path = PROGRAM_PATH / 'cif_files'
 
 # Yes, it does create folders on import.
 SERVER_LOGS_PATH.mkdir(exist_ok=True)
 TIME_RECORDS_PATH.mkdir(exist_ok=True)
+CIF_PATH.mkdir(exist_ok=True)
 
 
 class ContrastConfig(Config):
@@ -70,6 +74,10 @@ class QSpaceConfig(Config):
         flip_y='Flip image vertically',
         flip_x='Flip image horizontally',
     )
+
+    @property
+    def q_max(self) -> float:
+        return np.sqrt(self.q_z_max ** 2 + self.q_xy_max ** 2)
 
 
 class GeneralConfig(Config):
@@ -172,11 +180,26 @@ class ClusterConfig(Config):
         return seconds + minutes * 60 + hours * 3600
 
 
+class MatchingConfig(Config):
+    perform_matching: bool = True
+    max_distance: float = 0.05
+
+    PARAM_DESCRIPTIONS = dict(
+        perform_matching='Perform matching against crystal structures from cif folder',
+        max_distance='Max accepted distance between simulated and experimental peaks (Ang)'
+    )
+
+    @property
+    def cif_folder(self) -> Path:
+        return CIF_PATH
+
+
 class SaveConfig(Config):
     save_img: bool = False
     save_q_img: bool = False
-    save_polar_img: bool = False
+    save_polar_img: bool = True
     save_scores: bool = True
+    save_intensities: bool = True
 
     CONF_NAME = 'Save Configuration'
 
@@ -184,6 +207,7 @@ class SaveConfig(Config):
         save_img='Save raw images',
         save_q_img='Save images in reciprocal space',
         save_polar_img='Save images in polar space',
+        save_intensities='Save peak intensities',
     )
 
 
@@ -232,6 +256,7 @@ class AppConfig(Config):
     job_config: JobConfig = JobConfig()
     cluster_config: ClusterConfig = ClusterConfig()
     q_space: QSpaceConfig = QSpaceConfig()
+    match_config: MatchingConfig = MatchingConfig()
     contrast: ContrastConfig = ContrastConfig()
     parallel: ParallelConfig = ParallelConfig()
     polar_config: PolarConversionConfig = PolarConversionConfig()
@@ -246,6 +271,7 @@ class AppConfig(Config):
         general=GeneralConfig,
         cluster_config=ClusterConfig,
         q_space=QSpaceConfig,
+        match_config=MatchingConfig,
         contrast=ContrastConfig,
         parallel=ParallelConfig,
         polar_config=PolarConversionConfig,

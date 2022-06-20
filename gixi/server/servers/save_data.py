@@ -12,7 +12,7 @@ class SaveData(object):
         self.time_recorder = time_recorder or TimeRecorder('save_data', no_record=config.log_config.no_time_record)
 
         self.save_config = config.save_config
-        self._keys = _init_save_keys(self.save_config)
+        self._keys = _init_save_keys(config)
         self.src_path = config.src_path
         self.h5file = GixiFileManager(config.dest_path)
         self.h5file.init_folder(self.src_path.name, add_time=not config.job_config.rewrite_previous)
@@ -40,12 +40,19 @@ def _get_path_name(path: Path, rel_folder: Path) -> str:
     return str(path.relative_to(rel_folder)).split('.tif')[0]
 
 
-def _init_save_keys(config: SaveConfig):
+def _init_save_keys(config: AppConfig):
+    save_config = config.save_config
     keys = ['boxes']
-    if config.save_img:
+    if save_config.save_img:
         keys.append('img')
-    if config.save_scores:
+    if save_config.save_q_img:
+        keys.append('q_img')
+    if save_config.save_scores:
         keys.append('scores')
-    if config.save_polar_img:
+    if save_config.save_polar_img:
         keys.append('polar_img')
+    if save_config.save_intensities:
+        keys.append('intensities')
+    if config.match_config.perform_matching:
+        keys.append('matching_results')
     return keys
