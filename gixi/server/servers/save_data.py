@@ -4,7 +4,7 @@ from pathlib import Path
 from gixi.server.time_record import TimeRecorder
 
 from ..h5utils import GixiFileManager
-from ..app_config import AppConfig, SaveConfig
+from ..app_config import AppConfig
 
 
 class SaveData(object):
