@@ -31,7 +31,7 @@ class SaveData(object):
         if data_dict:
             with self.time_recorder():
                 file_name = _get_path_name(paths[0], self.src_path)
-                data_dict = {k: data_dict[k] for k in self._keys}
+                data_dict = {k: data_dict[k] for k in self._keys if k in data_dict}
                 self.h5file.save(file_name, data_dict, attrs=dict(paths=path_names))
 
 
