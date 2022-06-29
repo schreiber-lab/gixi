@@ -1,8 +1,16 @@
 # _gixi_
-## GIXD intelligent feature detection
+## End-to-end pipeline for GIXD data analysis
 
+The package is used in the following scientific publication:
 
-Implemented for Maxwell cluster at DESY synchrotron
-for real-time GIXD feature detection.
+[1] _End-to-end deep learning pipeline for real-time processing of
+surface scattering data at synchrotron facilities_
 
-Currently, package is exclusively for internal usage and is under development.
+V. Starostin,
+L. Pithan, 
+A. Greco, 
+V. Munteanu,
+A. Gerlach, 
+A. Hinderhofer, 
+and F. Schreiber 
+(submitted 2022)
