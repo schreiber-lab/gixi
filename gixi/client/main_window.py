@@ -4,6 +4,7 @@ from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from pyqtgraph.dockarea import DockArea, Dock
+import qdarkgraystyle
 
 from PyQt5.QtCore import Qt, pyqtSlot
 
@@ -126,6 +127,8 @@ def main(path: str = DEFAULT_DIR):
 
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     q_app = QApplication([])
+
+    q_app.setStyleSheet(qdarkgraystyle.load_stylesheet_pyqt5())
 
     app = MainWindow(path)
     app.show()
