@@ -81,19 +81,26 @@ def get_detector_polar_grid(q_config: QSpaceConfig, polar_config: PolarConversio
 def _get_detector_grid(q_config: QSpaceConfig, q_xy: np.ndarray, q_z: np.ndarray):
     k = 2 * np.pi / q_config.wavelength
 
-    q_xy2, q_z2 = (q_xy / k) ** 2, (q_z / k) ** 2
+    d = q_config.distance / q_config.pixel_size
 
-    a = q_config.distance / q_config.pixel_size
+    q_xy, q_z = q_xy / k, q_z / k
 
-    yn = 1 - (q_xy2 - 1) / (1 - q_z2)
+    q2 = q_xy ** 2 + q_z ** 2
 
-    a2 = a ** 2
+    norm = d / (1 - q2 / 2)
 
-    yy2 = 4 * a2 / yn ** 2 / (1 - q_z2) - a2
+    alpha = np.pi / 180 * q_config.incidence_angle
 
-    zz2 = (a2 + yy2) * q_z2 / (1 - q_z2)
+    sin, cos = np.sin(alpha), np.cos(alpha)
 
-    yy, zz = np.sqrt(yy2) + q_config.y0, np.sqrt(zz2) + q_config.z0
+    zz = (norm * (q_z - sin) + d * sin) / cos
+
+    yy2 = norm ** 2 - zz ** 2 - d ** 2
+    yy2[yy2 < 0] = np.nan
+    yy = np.sqrt(yy2)
+
+    zz += q_config.z0
+    yy += q_config.y0
 
     return yy, zz
 

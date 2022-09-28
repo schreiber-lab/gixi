@@ -2,8 +2,6 @@ cluster_config:
   chdir: ~/maxwell_output/
   max_cores: -1
   nodes: 1
-  partition: psx
-  reservation: ''
   time: 00:10:00
   use_cuda: true
 contrast:
@@ -25,7 +23,6 @@ job_config:
 log_config:
   debug: false
   log_to_file: true
-  record_filename: time_records.pt
   record_time: true
 model_config:
   name: save_only_largest_2
@@ -42,7 +39,7 @@ postprocessing_config:
 program_paths_config:
   local_env: false
 q_space:
-  distance: 1208.69
+  distance: 809
   flip_x: false
   flip_y: true
   incidence_angle: 0.5
