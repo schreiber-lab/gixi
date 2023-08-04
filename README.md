@@ -12,5 +12,5 @@ A. Greco,
 V. Munteanu,
 A. Gerlach, 
 A. Hinderhofer, 
-and F. Schreiber 
-(submitted 2022)
+and F. Schreiber. 
+Synchrotron Radiation News, 35:4, 21-27 [https://doi.org/10.1080/08940886.2022.2112499](https://doi.org/10.1080/08940886.2022.2112499)
